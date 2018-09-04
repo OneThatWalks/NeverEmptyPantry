@@ -1,0 +1,32 @@
+﻿@model NeverEmptyPantry.Common.Models.ProductIndexViewModel
+<div class="modal-dialog modal-lg">
+    <form asp-action="VoteMultiple" asp-controller="List" id="multiProductVoteForm" data-ajax="true" data-ajax-method="POST" data-ajax-success="getPartialViewHtml('@Url.Action("ListProductsPartial", "List", new { id = Model.ListId})', '#myListProductsList', function() {$('#myProductIndexModal').modal('hide');})">
+        <input asp-for="ListId" type="hidden"/>
+        <div class="modal-content" style="height: 80%;">
+            <div class="modal-header">
+                <h5 class="modal-title">Products</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: calc(100% - 120px); overflow-y: scroll;">
+
+                <div class="btn-group-toggle" data-toggle="buttons">
+                    @for (var i = 0; i < Model.ProductSelects.Count; i++)
+                    {
+                        <input asp-for="@Model.ProductSelects[i].ProductId" type="hidden"/>
+                        <input asp-for="@Model.ProductSelects[i].ProductName" type="hidden"/>
+                        <label class="btn btn-light btn-lg btn-block m-1">
+                            <input asp-for="@Model.ProductSelects[i].IsSelected" type="checkbox" autocomplete="off" /> @Model.ProductSelects[i].ProductName
+                        </label>
+                    }
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div> 

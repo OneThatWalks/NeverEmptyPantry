@@ -1,0 +1,24 @@
+﻿@using NeverEmptyPantry.Common.Enum
+@model NeverEmptyPantry.Common.Models.List.UserVoteResult
+
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="myVoteModalLabel">Severity for @Model.UserProductVote.ListProduct.Product.Name</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div id="myVoteModalBody" class="modal-body">
+            <div class="button-wrapper">
+                <button class="btn btn-danger" type="button" onclick="callAjax('@Url.Action("UpdateProductSeverity", "List", new { id = Model.UserProductVote.Id, state = UserProductVoteState.VOTE_CRITICAL })')">
+                    Critical
+                </button>
+                <button class="btn btn-warning" type="button" onclick="callAjax('@Url.Action("UpdateProductSeverity", "List", new { id = Model.UserProductVote.Id, state = UserProductVoteState.VOTE_ESSENTIAL })')">
+                    Essential
+                </button>
+                <button class="btn btn-default" type="button" onclick="callAjax('@Url.Action("UpdateProductSeverity", "List", new { id = Model.UserProductVote.Id, state = UserProductVoteState.VOTE_NONESSENTIAL })')">
+                    Non-Essential
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

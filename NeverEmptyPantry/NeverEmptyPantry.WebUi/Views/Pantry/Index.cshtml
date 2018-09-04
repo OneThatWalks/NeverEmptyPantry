@@ -1,0 +1,28 @@
+﻿@model PantryViewModel
+
+@{
+    ViewBag.Title = "Pantry";
+}
+
+<h2>@ViewBag.Title.</h2>
+<br/>
+<h3>Current List.</h3>
+<hr />
+@{
+    var activeList = Model.ActiveLists?.FirstOrDefault();
+
+    if (activeList != null)
+    {
+        <partial name="../List/_ListDetailsPartial" model="@activeList"/>
+    }
+    else
+    {
+        
+        @:<p>No active list, 
+        <a asp-action="Create" asp-controller="List">create one?</a>
+                                                            @:</p>
+    }
+}
+
+<h3>Lists</h3>
+<partial name="../List/Index" model="@Model.ListViewModels"/>

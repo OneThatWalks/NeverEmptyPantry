@@ -1,0 +1,58 @@
+﻿@model ProfileViewModel
+
+@{
+    ViewBag.Title = "Profile";
+}
+
+@if (User.IsInRole("Administrator"))
+{
+    @Html.ActionLink("Back to Index", "Index")
+}
+
+<h2>@ViewBag.Title.</h2>
+
+<div class="form-horizontal">
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayTextFor(m => m.Email)
+        </div>
+    </div>
+    <!-- OFFICE LOCATION -->
+    <div class="form-group">
+        @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayTextFor(m => m.FirstName)
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayTextFor(m => m.LastName)
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Title, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayTextFor(m => m.Title)
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.PhoneNumber, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayTextFor(m => m.PhoneNumber)
+        </div>
+    </div>
+    @if (User.IsInRole("Administrator"))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.Roles, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DisplayTextFor(m => m.RolesAsCsv)
+            </div>
+        </div>
+        
+    }
+
+</div>

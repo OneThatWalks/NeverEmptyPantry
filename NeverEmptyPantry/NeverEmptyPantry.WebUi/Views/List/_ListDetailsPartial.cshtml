@@ -1,0 +1,76 @@
+﻿@using NeverEmptyPantry.Common.Enum
+@model ListViewModel
+
+
+<div class="row">
+    <div class="col-6">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Id)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Id)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.StartDateTime)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StartDateTime)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.EndDateTime)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.EndDateTime)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.OrderState)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.OrderState)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.AuditDateTime)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.AuditDateTime)
+            </dd>
+            @if (Model.ListProducts != null && Model.ListProducts.Any())
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.ListProducts)
+                </dt>
+                <dd>
+                    @Model.ListProducts.Count()
+                </dd>
+            }
+            @if (Model.UserProductVotes != null && Model.UserProductVotes.Any())
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.UserProductVotes)
+                </dt>
+                <dd>
+                    @Model.UserProductVotes.Count()
+                </dd>
+            }
+        </dl>
+    </div>
+</div>
+
+@if (User.IsInRole("Administrator") && (Model.OrderState == OrderState.LIST_CREATED || Model.OrderState == OrderState.LIST_PENDING))
+{
+    <p>Ready to order?</p>
+    <button id="myOrderStateButton" class="btn btn-danger" onclick="goToLocation('@Url.Action("OrderProcessing", "Pantry", new {id = Model.Id})')">Process List</button>
+}
+<p>Missing something?</p>
+<button id="myAddProductButton" class="btn btn-dark" onclick="activateModal('@Url.Action("IndexPartial", "Product", new { listId = Model.Id} )', '#myProductIndexModal')">Add Product(s)</button>
+
+<div id="myProductIndexModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myProductIndexModal" aria-hidden="true">
+
+</div>

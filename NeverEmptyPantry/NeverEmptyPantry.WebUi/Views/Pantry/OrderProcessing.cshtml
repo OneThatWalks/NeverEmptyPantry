@@ -1,0 +1,50 @@
+﻿@using NeverEmptyPantry.Common.Enum
+@model NeverEmptyPantry.Common.Models.OrderProcessingViewModel
+
+<h4>Order Processing.</h4>
+
+<form asp-controller="Pantry" asp-action="OrderProcessing" method="post">
+    <input asp-for="@Model.ListId" type="hidden" />
+    <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+                <th scope="col">
+                    Order
+                </th>
+                <th scope="col">
+                    Product
+                </th>
+                <th scope="col">
+                    Votes
+                </th>
+                <th scope="col">
+                    Average
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.ProductVoteGroups.Count; i++)
+            {
+                <tr>
+                    <th scope="row">
+                        <input asp-for="@Model.ProductVoteGroups[i].IsSelected" class="form-check-input" />
+                    </th>
+                    <th>
+                        <input asp-for="@Model.ProductVoteGroups[i].ProductId" type="hidden" />
+                        <input asp-for="@Model.ProductVoteGroups[i].ProductName" type="hidden" />
+                        @Model.ProductVoteGroups[i].ProductName
+                    </th>
+                    <th>
+                        <input asp-for="@Model.ProductVoteGroups[i].VoteCount" type="hidden" />
+                        @Model.ProductVoteGroups[i].VoteCount
+                    </th>
+                    <th>
+                        <input asp-for="@Model.ProductVoteGroups[i].VotingAverage" type="hidden" />
+                        @((UserProductVoteState)(int)Model.ProductVoteGroups[i].VotingAverage)
+                    </th>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Process</button>
+</form>

@@ -1,0 +1,80 @@
+﻿@model NeverEmptyPantry.WebUi.Models.ProductViewModel
+
+<div>
+    <h4>Product Details</h4>
+    <hr />
+    @if (!string.IsNullOrEmpty(Model.Image))
+    {
+        <img src="@Model.Image" alt="Image of @Model.Name"/>
+    }
+    <dl class="dl-horizontal">
+        @if (User.IsInRole("Administrator"))
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Id)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Id)
+            </dd>
+        }
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Brand)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Brand)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PackSize)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PackSize)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UnitSize)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UnitSize)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Category)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Image)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Image)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedDateTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AddedDateTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Active)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Active)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (User.IsInRole("Administrator"))
+    {
+        <a asp-action="Edit" asp-controller="Product" asp-area="" asp-route-productId="@Model.Id">Edit</a> @:|
+    }
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a asp-action="Vote" asp-controller="Product" asp-route-id="@Model.Id">Vote</a> @:|
+    }
+    <a asp-action="Index">Back to List</a>
+</div>

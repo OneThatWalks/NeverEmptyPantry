@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Identity
+@if (User.Identity.IsAuthenticated)
+{
+    using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="accountDropDownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hello @User.Identity.Name!<span class="caret"></span></a>
+                <div class="dropdown-menu" aria-labelledby="accountDropDownMenu">
+
+                    @if (User.IsInRole("Administrator"))
+                    {
+
+                        @Html.ActionLink("Admin Dashboard", "Index", "Account", routeValues: null, htmlAttributes: new { title = "Admin", @class = "dropdown-item" })
+
+                    }
+                    @Html.ActionLink("My Profile", "Profile", "Account", routeValues: null, htmlAttributes: new { title = "Account", @class = "dropdown-item" })
+
+                    <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+
+                </div>
+                @*@Html.ActionLink("Hello " + User.Identity.Name + "!", "Profile", "Account", routeValues: null, htmlAttributes: new {title = "Account"})*@
+            </li>
+            <li></li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Log in", "Login", "Account", routeValues: new { ReturnUrl = Context.Request.Path }, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+    </ul>
+}
