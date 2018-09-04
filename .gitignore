@@ -91,6 +91,9 @@ ipch/
 $tf/
 $tf1/
 
+# TFS Build Process Templates
+BuildProcessTemplates/
+
 # Guidance Automation Toolkit
 *.gpState
 
