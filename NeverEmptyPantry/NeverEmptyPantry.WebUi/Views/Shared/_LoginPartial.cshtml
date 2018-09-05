@@ -13,7 +13,7 @@
                     @if (User.IsInRole("Administrator"))
                     {
 
-                        @Html.ActionLink("Admin Dashboard", "Index", "Account", routeValues: null, htmlAttributes: new { title = "Admin", @class = "dropdown-item" })
+                        @Html.ActionLink("Admin Dashboard", "Index", "Admin", routeValues: null, htmlAttributes: new { title = "Admin", @class = "dropdown-item" })
 
                     }
                     @Html.ActionLink("My Profile", "Profile", "Account", routeValues: null, htmlAttributes: new { title = "Account", @class = "dropdown-item" })

@@ -16,6 +16,7 @@
         "toastr": "^2.1.4"
     },
     "dependencies": {
+        "chart.js": "^2.7.2",
         "gulp": "^4.0.0",
         "jquery-ajax-unobtrusive": "^3.2.4"
     }

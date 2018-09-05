@@ -1,2 +1,113 @@
 ﻿@model NeverEmptyPantry.Common.Models.AdminIndexViewModel
+<!-- Show lists created, processed and recently delivered items -->
+<div class="row pb-5">
+    <div class="col">
+        <!-- First of three metrics-->
+        <div class="card">
+            <h5 class="card-header">Active Lists</h5>
+            <div class="card-body">
+                <p class="card-text text-center">active <span class="admin-metric-number">2/15</span> total</p>
+                <button type="button" class="btn btn-block" onclick="">Go To Lists</button>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <!-- Second of three metrics-->
+        <div class="card">
+            <h5 class="card-header">Waiting For Delivery</h5>
+            <div class="card-body">
+                <p class="card-text text-center"><span class="admin-metric-number">1/2</span> orders</p>
+                <button type="button" class="btn btn-block" onclick="">Show List Pending Delivery</button>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <!-- Third of three metrics-->
+        <div class="card">
+            <h5 class="card-header">Recent Deliveries</h5>
+            <div class="card-body">
+                <p class="card-text text-center"><span class="admin-metric-number">13</span> items</p>
+                <button type="button" class="btn btn-block" onclick="">Show Recently Delivered</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row pb-5">
+    <div class="col-12">
+        <div class="card">
+            <h5 class="card-header">Statistics</h5>
+            <div class="card-body">
+                <canvas id="myMetricChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Chart popular items and expected run out date based on metrics -->
+<!-- Allow for other metrics -->
+
+@section Scripts {
+    <script type="text/javascript">
+        var ctx = document.getElementById('myMetricChart').getContext('2d');
+
+        var data = {
+            labels: "",
+            datasets: [
+                {
+                    label: ["Test 1"],
+                    backgroundColor: "rgba(255, 221, 50, 0.2)",
+                    borderColor: "rgba(255, 221, 50, 1)",
+                    data: [
+                        {
+                            x: 3.14,
+                            y: 9,
+                            r: 15
+                        }]
+                },
+                {
+                    label: ["Test 2"],
+                    backgroundColor: "rgba(255, 221, 50, 0.2)",
+                    borderColor: "rgba(255, 221, 50, 1)",
+                    data: [
+                        {
+                            x: 1.6,
+                            y: 3,
+                            r: 2
+                        }]
+                }
+            ]
+        };
+
+        var options = {
+            title: {
+                display: true,
+                text: "Item Popularity"
+            },
+            scales: {
+                yAxes: [
+                    {
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Order Consistency (% Occurence of items in all lists)"
+                        }
+                    }
+                ],
+                xAxes: [
+                    {
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Average Severity"
+                        }
+                    }
+                ]
+            }
+        };
+
+        var myMetricChart = new Chart(ctx,
+            {
+                type: 'bubble',
+                data: data,
+                options: options
+            });
+    </script>
+}

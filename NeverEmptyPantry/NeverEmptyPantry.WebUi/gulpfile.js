@@ -38,11 +38,15 @@ var dependencies = {
     "jquery-ajax-unobtrusive": {
         "jquery.unobtrusive-ajax.js": "",
         "jquery.unobtrusive-ajax.min.js": ""
+    },
+    "chart.js": {
+        "dist/chart.js": "",
+        "dist/chart.min.js": ""
     }
 };
 
 gulp.task('scripts',
-    function() {
+    function(done) {
         var streams = [];
         // Scans the dependencies variable for all needed assest and copys them from node_modules to the lib
         for (var property in dependencies) {
@@ -60,7 +64,7 @@ gulp.task('scripts',
                 }
             }
         }
-
+        done();
     });
 
 paths.js = paths.webroot + "js/**/*.js";
@@ -78,7 +82,9 @@ gulp.task("clean:css", function (cb) {
     rimraf(paths.concatCssDest, cb);
 });
 
-gulp.task("clean", ["clean:js", "clean:css"]);
+gulp.task("clean", gulp.series('clean:js', 'clean:css', function(done) {
+    done();
+}));
 
 gulp.task("min:js", function () {
     return gulp.src([paths.js, "!" + paths.minJs], { base: "." })
@@ -94,4 +100,6 @@ gulp.task("min:css", function () {
         .pipe(gulp.dest("."));
 });
 
-gulp.task("min", ["min:js", "min:css"]);
+gulp.task("min", gulp.series('min:js', 'min:css', function(done) {
+    done();
+}));
