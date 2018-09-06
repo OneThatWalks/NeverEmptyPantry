@@ -52,31 +52,20 @@
 
         var data = {
             labels: "",
-            datasets: [
-                {
-                    label: ["Test 1"],
-                    backgroundColor: "rgba(255, 221, 50, 0.2)",
-                    borderColor: "rgba(255, 221, 50, 1)",
-                    data: [
-                        {
-                            x: 3.14,
-                            y: 9,
-                            r: 15
-                        }]
-                },
-                {
-                    label: ["Test 2"],
-                    backgroundColor: "rgba(255, 221, 50, 0.2)",
-                    borderColor: "rgba(255, 221, 50, 1)",
-                    data: [
-                        {
-                            x: 1.6,
-                            y: 3,
-                            r: 2
-                        }]
-                }
-            ]
+            datasets: []
         };
+
+        function getMetrics() {
+            _get('@Url.Action("AdminMetrics", "Admin", new { type = "itempop" })',
+                function(d) {
+                    if (d) {
+                        myMetricChart.data.datasets.push(...d);
+                        myMetricChart.update();
+                    }
+                });
+        }
+
+        getMetrics();
 
         var options = {
             title: {
