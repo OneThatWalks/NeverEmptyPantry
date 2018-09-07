@@ -28,37 +28,37 @@ namespace NeverEmptyPantry.WebUi.Controllers
                     {
                         BackgroundColor = Color.AliceBlue,
                         BorderColor = Color.Aqua,
-                        Label = new string[] { "Ice" },
-                        Data = new ChartPointLocationRadius
+                        Label =  "Ice" ,
+                        Data = new ChartPointLocationRadius[] { new ChartPointLocationRadius
                         {
                             X = 10,
                             Y = 5,
                             R = 5
-                        }
+                        } }
                     },
                     new ChartDataSet
                     {
                         BackgroundColor = Color.BurlyWood,
                         BorderColor = Color.Coral,
-                        Label = new string[] { "Fire" },
-                        Data = new ChartPointLocationRadius
+                        Label =  "Fire" ,
+                        Data = new ChartPointLocationRadius[] {new ChartPointLocationRadius
                         {
                             X = 5,
                             Y = 10,
                             R = 7
-                        }
+                        }}
                     },
                     new ChartDataSet
                     {
                         BackgroundColor = Color.MediumOrchid,
                         BorderColor = Color.Indigo,
-                        Label = new string[] { "Purple" },
-                        Data = new ChartPointLocationRadius
+                        Label =  "Purple" ,
+                        Data = new ChartPointLocationRadius[] {new ChartPointLocationRadius
                         {
                             X = 15,
                             Y = 15,
                             R = 10
-                        }
+                        }}
                     }
                 });
             }

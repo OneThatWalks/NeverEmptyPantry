@@ -6,12 +6,12 @@ namespace NeverEmptyPantry.Common.Models
 {
     public class ChartDataSet
     {
-        public string[] Label { get; set; }
+        public string Label { get; set; }
         [JsonConverter(typeof(ColorConverter))]
         public Color BackgroundColor { get; set; }
         [JsonConverter(typeof(ColorConverter))]
         public Color BorderColor { get; set; }
-        public ChartPointLocationRadius Data { get; set; }
+        public ChartPointLocationRadius[] Data { get; set; }
         public bool Hidden { get; set; } = false;
     }
 
