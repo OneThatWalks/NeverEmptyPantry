@@ -6,6 +6,7 @@ using NeverEmptyPantry.Common.Models.List;
 using NeverEmptyPantry.Repository.Entity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Repository.Services
@@ -17,6 +18,11 @@ namespace NeverEmptyPantry.Repository.Services
         public ListRepository(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<IEnumerable<List>> GetListsAsync(Func<List, bool> query)
+        {
+            return _context.Lists.Where(query).ToList();
         }
 
         public async Task<IEnumerable<List>> GetListsAsync()

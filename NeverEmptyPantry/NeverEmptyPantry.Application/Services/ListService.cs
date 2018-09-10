@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Enum;
@@ -21,6 +22,16 @@ namespace NeverEmptyPantry.Application.Services
             _listProductRepository = listProductRepository;
             _userVoteRepository = userVoteRepository;
         }
+
+        public async Task<ListsResult> GetLists(Func<List, bool> query)
+        {
+            var lists = await _listRepository.GetListsAsync(query);
+
+            var mapped = lists.Select(ListDto.From);
+
+            return ListsResult.ListsSuccess(mapped);
+        }
+
         public async Task<ListsResult> GetLists()
         {
             var lists = await _listRepository.GetListsAsync();

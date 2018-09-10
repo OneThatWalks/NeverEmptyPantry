@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Models;
@@ -8,6 +9,7 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
 {
     public interface IListService
     {
+        Task<ListsResult> GetLists(Func<List, bool> query);
         Task<ListsResult> GetLists();
         Task<ListResult> GetList(int listId);
         Task<ListResult> CreateList(ListDto model);

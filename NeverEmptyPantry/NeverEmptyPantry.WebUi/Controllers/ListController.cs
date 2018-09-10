@@ -31,9 +31,10 @@ namespace NeverEmptyPantry.WebUi.Controllers
             _listProductService = listProductService;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery] OrderState state = OrderState.LIST_CREATED)
         {
-            var lists = await _listService.GetLists();
+            var lists = await _listService.GetLists(x => x.OrderState == state);
 
             var mappedToViewModels = lists.Lists.Select(Mapper.Map<ListViewModel>);
 
