@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Models;
@@ -14,5 +15,6 @@ namespace NeverEmptyPantry.Common.Interfaces
         Task<UserVoteResult> RemoveVoteAsync(int listProductId, ApplicationUser user);
         Task<IEnumerable<UserProductVoteDto>> GetListProductVotesAsync(int listId);
         Task<UserVoteResult> GetVoteAsync(int id);
+        Task<UserVotesResult> Votes(Func<UserProductVote, bool> query);
     }
 }

@@ -17,8 +17,19 @@ namespace NeverEmptyPantry.Common.Models
 
     public class ChartPointLocationRadius
     {
+        /// <summary>
+        /// Average Severity of the item
+        /// </summary>
         public double X { get; set; }
+
+        /// <summary>
+        /// Occurence in total lists
+        /// </summary>
         public double Y { get; set; }
+
+        /// <summary>
+        /// Total votes
+        /// </summary>
         public double R { get; set; }
     }
 

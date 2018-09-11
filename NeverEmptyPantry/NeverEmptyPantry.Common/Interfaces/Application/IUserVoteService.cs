@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Enum;
+using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Common.Models.List;
 
@@ -11,5 +13,7 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
         Task<UserVoteResult> RemoveVote(int listProductId, ApplicationUser user);
         Task<UserVoteResult> UpdateVote(int id, UserProductVoteState voteState);
         Task<UserVoteResult> GetVote(int id);
+
+        Task<UserVotesResult> Votes(Func<UserProductVote, bool> query);
     }
 }

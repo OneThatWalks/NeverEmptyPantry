@@ -122,5 +122,21 @@ namespace NeverEmptyPantry.Repository.Services
 
             return UserVoteResult.VoteSuccess(UserProductVoteDto.From(result));
         }
+
+        public async Task<UserVotesResult> Votes(Func<UserProductVote, bool> query)
+        {
+            var result = _context.UserProductVotes.Where(query).ToArray();
+
+            if (result.Length == 0)
+            {
+                return UserVotesResult.VoteFailed(new Error
+                {
+                    Code = ErrorCodes.EntityFrameworkNotFoundError,
+                    Description = $"No votes returned for query"
+                });
+            }
+
+            return UserVotesResult.VoteSuccess(result.Select(UserProductVoteDto.From).ToArray());
+        }
     }
 }

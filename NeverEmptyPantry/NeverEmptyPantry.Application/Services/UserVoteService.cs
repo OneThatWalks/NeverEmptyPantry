@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
@@ -41,6 +42,13 @@ namespace NeverEmptyPantry.Application.Services
         public async Task<UserVoteResult> GetVote(int id)
         {
             var result = await _userVoteRepository.GetVoteAsync(id);
+
+            return result;
+        }
+
+        public async Task<UserVotesResult> Votes(Func<UserProductVote, bool> query)
+        {
+            var result = await _userVoteRepository.Votes(query);
 
             return result;
         }
