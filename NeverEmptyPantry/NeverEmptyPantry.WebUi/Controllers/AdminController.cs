@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.List;
 using NeverEmptyPantry.Common.Models.Product;
 
@@ -17,18 +19,45 @@ namespace NeverEmptyPantry.WebUi.Controllers
         private readonly IListService _listService;
         private readonly IListProductService _listProductService;
         private readonly IUserVoteService _userVoteService;
+        private readonly IAccountService _accountService;
 
-        public AdminController(IListService listService, IListProductService listProductService, IUserVoteService userVoteService)
+        public AdminController(IListService listService, IListProductService listProductService, IUserVoteService userVoteService, IAccountService accountService)
         {
             _listService = listService;
             _listProductService = listProductService;
             _userVoteService = userVoteService;
+            _accountService = accountService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var model = new AdminIndexViewModel();
+
+            var lists = await _listService.GetLists();
+
+            model.ActiveLists = $"{lists.Lists.Count(list => list.OrderState == OrderState.LIST_CREATED)}/{lists.Lists.Count()}";
+            model.ProcessedLists =
+                $"{lists.Lists.Count(list => list.OrderState == OrderState.LIST_PROCESSED || list.OrderState == OrderState.LIST_PENDING)}/{lists.Lists.Count()}";
+            var recentLists = lists.Lists.Where(list => list.AuditDateTime >= DateTime.UtcNow.AddDays(-7) && list.OrderState == OrderState.LIST_RECEIVED).ToList();
+            var recentItems = 0;
+            foreach (var recentList in recentLists)
+            {
+                var items = await _listProductService.GetListProducts(recentList.Id);
+                recentItems = recentItems + items.ListProducts.Count();
+            }
+            model.DeliveredItems = $"{recentItems}";
+
+            var allVotes = await _userVoteService.Votes(item => true); // Whoa this could be bad
+
+            var contributors = allVotes.UserProductVotes.GroupBy(vote => vote.ApplicationUser.Email).OrderByDescending(group => group.Count()).Take(5).ToArray();
+            model.Contributors = new List<ProfileDto>();
+            foreach (var grouping in contributors)
+            {
+                var profile = await _accountService.GetProfileAsync(grouping.Key);
+                model.Contributors.Add(profile.Profile);
+            }
+
 
             return
             View("Index", model);
@@ -87,45 +116,6 @@ namespace NeverEmptyPantry.WebUi.Controllers
             if ("itempop".Equals(type))
             {
                 return new OkObjectResult(dataSets.ToArray());
-                    var test = new OkObjectResult(new ChartDataSet[]
-                {
-                    new ChartDataSet
-                    {
-                        BackgroundColor = Color.AliceBlue,
-                        BorderColor = Color.Aqua,
-                        Label =  "Ice" ,
-                        Data = new ChartPointLocationRadius[] { new ChartPointLocationRadius
-                        {
-                            X = 10,
-                            Y = 5,
-                            R = 5
-                        } }
-                    },
-                    new ChartDataSet
-                    {
-                        BackgroundColor = Color.BurlyWood,
-                        BorderColor = Color.Coral,
-                        Label =  "Fire" ,
-                        Data = new ChartPointLocationRadius[] {new ChartPointLocationRadius
-                        {
-                            X = 5,
-                            Y = 10,
-                            R = 7
-                        }}
-                    },
-                    new ChartDataSet
-                    {
-                        BackgroundColor = Color.MediumOrchid,
-                        BorderColor = Color.Indigo,
-                        Label =  "Purple" ,
-                        Data = new ChartPointLocationRadius[] {new ChartPointLocationRadius
-                        {
-                            X = 15,
-                            Y = 15,
-                            R = 10
-                        }}
-                    }
-                });
             }
 
             return new BadRequestResult();

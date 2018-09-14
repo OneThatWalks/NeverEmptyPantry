@@ -11,7 +11,7 @@
         <div class="card">
             <h5 class="card-header">Active Lists</h5>
             <div class="card-body">
-                <p class="card-text text-center">active <span class="admin-metric-number">2/15</span> total</p>
+                <p class="card-text text-center">active <span class="admin-metric-number">@Model.ActiveLists</span> total</p>
                 <button type="button" class="btn btn-block" onclick="goToLocation('@Url.Action("Index", "List", new { state = OrderState.LIST_CREATED })')">Go To Lists</button>
             </div>
         </div>
@@ -21,7 +21,7 @@
         <div class="card">
             <h5 class="card-header">Waiting For Delivery</h5>
             <div class="card-body">
-                <p class="card-text text-center"><span class="admin-metric-number">1/2</span> orders</p>
+                <p class="card-text text-center"><span class="admin-metric-number">@Model.ProcessedLists</span> orders</p>
                 <button type="button" class="btn btn-block" onclick="goToLocation('@Url.Action("Index", "List", new { state = OrderState.LIST_PROCESSED })')">Show List Pending Delivery</button>
             </div>
         </div>
@@ -31,7 +31,7 @@
         <div class="card">
             <h5 class="card-header">Recent Deliveries</h5>
             <div class="card-body">
-                <p class="card-text text-center"><span class="admin-metric-number">13</span> items</p>
+                <p class="card-text text-center"><span class="admin-metric-number">@Model.DeliveredItems</span> items</p>
                 <button type="button" class="btn btn-block" onclick="goToLocation('@Url.Action("Index", "List", new { state = OrderState.LIST_RECEIVED })')">Show Recently Delivered</button>
             </div>
         </div>
@@ -52,13 +52,13 @@
         <div class="card">
             <h5 class="card-header">Most Active Contributors</h5>
             <div class="card-body">
-
+                <!-- Use card/accordian here -->
             </div>
         </div>
     </div>
     <div class="col-6">
         <div class="card">
-            <h5 class="card-header">Estimated Inventory</h5>
+            <h5 class="card-header">Recent Votes</h5>
             <div class="card-body">
 
             </div>
