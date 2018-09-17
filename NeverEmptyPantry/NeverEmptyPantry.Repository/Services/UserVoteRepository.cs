@@ -108,7 +108,10 @@ namespace NeverEmptyPantry.Repository.Services
 
         public async Task<UserVoteResult> GetVoteAsync(int id)
         {
-            var result = await _context.UserProductVotes.Include(vote => vote.ListProduct).ThenInclude(lp => lp.List).Include(lp => lp.ListProduct).ThenInclude(lp => lp.Product).Include(vote => vote.ApplicationUser)
+            var result = await _context.UserProductVotes
+                .Include(vote => vote.ListProduct).ThenInclude(lp => lp.List)
+                .Include(lp => lp.ListProduct).ThenInclude(lp => lp.Product)
+                .Include(vote => vote.ApplicationUser)
                 .SingleOrDefaultAsync(v => v.Id == id);
 
             if (result == null)
@@ -125,7 +128,12 @@ namespace NeverEmptyPantry.Repository.Services
 
         public async Task<UserVotesResult> Votes(Func<UserProductVote, bool> query)
         {
-            var result = _context.UserProductVotes.Where(query).ToArray();
+            var result = _context.UserProductVotes
+                .Include(vote => vote.ApplicationUser)
+                .Include(vote => vote.ListProduct).ThenInclude(lp => lp.List)
+                .Include(vote => vote.ListProduct).ThenInclude(lp => lp.Product)
+                .Where(query)
+                .ToArray();
 
             if (result.Length == 0)
             {
