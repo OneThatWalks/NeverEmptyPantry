@@ -44,3 +44,18 @@ body {
 .admin-metric-number {
     font-size: 64px;
 }
+
+/* Contributors */
+ul.contributor-list {
+    list-style-type: none;
+    padding: 5px;
+    margin: 5px;
+}
+
+ul.contributor-list > li.contributor-bar {
+    border-radius: .25rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    width: 100%;
+    height: 75px;
+}
