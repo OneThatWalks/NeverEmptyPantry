@@ -1,9 +1,8 @@
 ﻿@using NeverEmptyPantry.Common.Enum
-@using NeverEmptyPantry.Common.Models
 @model NeverEmptyPantry.Common.Models.AdminIndexViewModel
 
 <h3>Administration Dashboard</h3>
-<hr/>
+<hr />
 
 <!-- Show lists created, processed and recently delivered items -->
 <div class="row pb-5">
@@ -52,19 +51,17 @@
     <div class="col-6">
         <div class="card">
             <h5 class="card-header">Most Active Contributors</h5>
-            <div class="card-body">
-                <div class="accordion" id="myContributorAccordion">
+            <div class="card-body p-0">
+                <ul class="contributor-list">
                     @foreach (var user in Model.Contributors)
                     {
-                        if (user == null) {continue;}
-                        <ul class="contributor-list">
-                            <li class="contributor-bar">
-                                <button class="btn btn-link">@user.FirstName @user.LastName</button>
-                            </li>
-                        </ul>
+                        if (user == null) { continue; }
+                        <li class="contributor-bar">
+                            <button class="btn btn-link" onclick="goToLocation('@Url.Action("Profile", "Account", new { email = user.Email })')">@user.FirstName @user.LastName</button>
+                            <span class="contributor-options">Contributed Votes: @Model.GetContributorVotes(user.Email).Count</span>
+                        </li>
                     }
-                    
-                </div>
+                </ul>
             </div>
         </div>
     </div>

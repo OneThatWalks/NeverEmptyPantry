@@ -52,12 +52,16 @@ namespace NeverEmptyPantry.WebUi.Controllers
 
             var contributors = allVotes.UserProductVotes.GroupBy(vote => vote.ApplicationUser.Email).OrderByDescending(group => group.Count()).Take(5).ToArray();
             model.Contributors = new List<ProfileDto>();
+            model.ContributorVotes = new List<UserProductVoteDto>();
             foreach (var grouping in contributors)
             {
                 var profile = await _accountService.GetProfileAsync(grouping.Key);
                 model.Contributors.Add(profile.Profile);
+                foreach (var item in grouping)
+                {
+                    model.ContributorVotes.Add(item);
+                }
             }
-
 
             return
             View("Index", model);

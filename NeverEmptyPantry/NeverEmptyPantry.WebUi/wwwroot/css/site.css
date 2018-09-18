@@ -55,7 +55,11 @@ ul.contributor-list {
 ul.contributor-list > li.contributor-bar {
     border-radius: .25rem;
     background: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    width: 100%;
-    height: 75px;
+    padding: 5px;
+    margin: 5px;
+}
+
+ul.contributor-list > li.contributor-bar > span.contributor-options {
+    position: absolute;
+    right: 0; /* Will need to figure out a better option */
 }
