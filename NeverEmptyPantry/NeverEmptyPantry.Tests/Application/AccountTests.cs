@@ -15,7 +15,6 @@ using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Tests.Util;
-using Microsoft.EntityFrameworkCore;
 using NeverEmptyPantry.Common.Models;
 
 namespace NeverEmptyPantry.Tests.Application

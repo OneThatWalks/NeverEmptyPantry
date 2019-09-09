@@ -18,19 +18,21 @@ namespace NeverEmptyPantry.WebUi.Controllers
         private readonly IProductService _product;
         private readonly IUserVoteService _voteService;
         private readonly IListProductService _listProductService;
+        private readonly IMapper _mapper;
 
-        public ProductController(IProductService product, IUserVoteService voteService, IListProductService listProductService)
+        public ProductController(IProductService product, IUserVoteService voteService, IListProductService listProductService, IMapper mapper)
         {
             _product = product;
             _voteService = voteService;
             _listProductService = listProductService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
             var productsResult = await _product.GetProducts();
 
-            var mappedToProductVieModels = productsResult.Products.Select(Mapper.Map<ProductViewModel>);
+            var mappedToProductVieModels = productsResult.Products.Select(_mapper.Map<ProductViewModel>);
 
             return View(mappedToProductVieModels);
         }
@@ -63,7 +65,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return View(model);
             }
 
-            var mappedProduct = Mapper.Map<ProductDto>(model);
+            var mappedProduct = _mapper.Map<ProductDto>(model);
 
             var createResult = await _product.AddProduct(mappedProduct);
 
@@ -93,7 +95,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
 
             if (result.Succeeded)
             {
-                return View(Mapper.Map<ProductViewModel>(result.Product));
+                return View(_mapper.Map<ProductViewModel>(result.Product));
             }
 
             ViewData.Clear();
@@ -109,7 +111,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
 
             if (result.Succeeded)
             {
-                return View(Mapper.Map<ProductViewModel>(result.Product));
+                return View(_mapper.Map<ProductViewModel>(result.Product));
             }
 
             ViewData.Clear();
@@ -126,7 +128,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return View(model);
             }
 
-            var mapped = Mapper.Map<ProductDto>(model);
+            var mapped = _mapper.Map<ProductDto>(model);
 
             var result = await _product.UpdateProduct(model.Id, mapped);
 

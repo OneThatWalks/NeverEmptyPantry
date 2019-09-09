@@ -21,14 +21,16 @@ namespace NeverEmptyPantry.WebUi.Controllers
         private readonly IUserVoteService _voteService;
         private readonly IAccountService _accountService;
         private readonly IListProductService _listProductService;
+        private readonly IMapper _mapper;
 
-        public ListController(IListService listService, IProductService productService, IUserVoteService voteService, IAccountService accountService, IListProductService listProductService)
+        public ListController(IListService listService, IProductService productService, IUserVoteService voteService, IAccountService accountService, IListProductService listProductService, IMapper mapper)
         {
             _listService = listService;
             _productService = productService;
             _voteService = voteService;
             _accountService = accountService;
             _listProductService = listProductService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -36,7 +38,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
         {
             var lists = await _listService.GetLists(x => x.OrderState == state);
 
-            var mappedToViewModels = lists.Lists.Select(Mapper.Map<ListViewModel>);
+            var mappedToViewModels = lists.Lists.Select(_mapper.Map<ListViewModel>);
 
             return View(mappedToViewModels);
         }
@@ -61,7 +63,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return View();
             }
 
-            var mappedList = Mapper.Map<ListDto>(model);
+            var mappedList = _mapper.Map<ListDto>(model);
 
             var result = await _listService.CreateList(mappedList);
 
@@ -87,7 +89,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return RedirectToAction("Index");
             }
 
-            var mappedList = Mapper.Map<ListViewModel>(listResult.List);
+            var mappedList = _mapper.Map<ListViewModel>(listResult.List);
 
             return View(mappedList);
         }
@@ -101,7 +103,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return View(model);
             }
 
-            var mappedList = Mapper.Map<ListDto>(model);
+            var mappedList = _mapper.Map<ListDto>(model);
 
             var result = await _listService.UpdateList(mappedList);
 
@@ -127,7 +129,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return RedirectToAction("Index");
             }
 
-            var mappedList = Mapper.Map<ListViewModel>(listResult.List);
+            var mappedList = _mapper.Map<ListViewModel>(listResult.List);
 
             if (listResult.ListProducts != null && listResult.ListProducts.Any())
             {
@@ -164,7 +166,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
 
             var listResult = await _listService.GetLists(); // Potential predicate action here
 
-            var lists = listResult.Lists.Where(l => l.OrderState == OrderState.LIST_CREATED).Select(Mapper.Map<ListViewModel>).ToList();
+            var lists = listResult.Lists.Where(l => l.OrderState == OrderState.LIST_CREATED).Select(_mapper.Map<ListViewModel>).ToList();
 
             return View(lists);
         }
@@ -240,7 +242,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return PartialView("_ListProductsList", null);
             }
 
-            var mappedList = Mapper.Map<ListViewModel>(listResult.List);
+            var mappedList = _mapper.Map<ListViewModel>(listResult.List);
 
             if (listResult.ListProducts != null && listResult.ListProducts.Any())
             {

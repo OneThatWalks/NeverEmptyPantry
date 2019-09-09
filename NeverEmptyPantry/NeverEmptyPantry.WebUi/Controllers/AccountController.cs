@@ -2,13 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NeverEmptyPantry.Common.Interfaces;
+using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Models.Account;
-using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.WebUi.Models;
 using System.Linq;
 using System.Threading.Tasks;
-using NeverEmptyPantry.Common.Interfaces.Application;
 
 namespace NeverEmptyPantry.WebUi.Controllers
 {
@@ -17,10 +15,12 @@ namespace NeverEmptyPantry.WebUi.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IAccountService accountService, IMapper mapper)
         {
             _accountService = accountService;
+            _mapper = mapper;
         }
 
         [Authorize(Roles = "Administrator")]
@@ -53,7 +53,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
 
                 profile.Profile.Roles = await _accountService.GetUserRoles(email);
 
-                var view = Mapper.Map<ProfileViewModel>(profile.Profile);
+                var view = _mapper.Map<ProfileViewModel>(profile.Profile);
 
                 var roles = await _accountService.GetRoles();
 
@@ -64,7 +64,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
             
             var managerUser = await _accountService.GetUserFromClaimsPrincipal(currentUserClaim);
 
-            var selfView = Mapper.Map<ProfileViewModel>(managerUser);
+            var selfView = _mapper.Map<ProfileViewModel>(managerUser);
 
             return View(selfView);
         }
@@ -87,7 +87,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return View(model);
             }
 
-            var dto = Mapper.Map<LoginDto>(model);
+            var dto = _mapper.Map<LoginDto>(model);
 
             var result = await _accountService.LoginAsync(dto);
 
@@ -125,7 +125,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var dto = Mapper.Map<RegisterDto>(model);
+            var dto = _mapper.Map<RegisterDto>(model);
 
             var result = await _accountService.RegisterAsync(dto);
             if (result.Succeeded)

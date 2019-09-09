@@ -17,11 +17,13 @@ namespace NeverEmptyPantry.WebUi.Controllers
     {
         private readonly IListService _listService;
         private readonly IListProductService _listProductService;
+        private readonly IMapper _mapper;
 
-        public PantryController(IListService listService, IListProductService listProductService)
+        public PantryController(IListService listService, IListProductService listProductService, IMapper mapper)
         {
             _listService = listService;
             _listProductService = listProductService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
@@ -36,7 +38,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
                 return View();
             }
 
-            var listsMapped = lists.Lists.Select(Mapper.Map<ListViewModel>).ToList();
+            var listsMapped = lists.Lists.Select(_mapper.Map<ListViewModel>).ToList();
 
             var pvm = new PantryViewModel
             {
@@ -55,7 +57,7 @@ namespace NeverEmptyPantry.WebUi.Controllers
 
                     if (result.Succeeded)
                     {
-                        var item = Mapper.Map<ListViewModel>(result.List);
+                        var item = _mapper.Map<ListViewModel>(result.List);
 
                         item.ListProducts = result.ListProducts;
                         item.UserProductVotes = result.UserProductVotes;

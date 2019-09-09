@@ -57,12 +57,25 @@ namespace NeverEmptyPantry.WebUi
             services.AddScoped<IListProductRepository, ListProductRepository>();
             services.AddScoped<IUserVoteRepository, UserVoteRepository>();
 
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.CreateMap<ProfileDto, ProfileViewModel>();
+                cfg.CreateMap<RegisterViewModel, RegisterDto>();
+                cfg.CreateMap<LoginDto, LoginViewModel>();
+                cfg.CreateMap<ApplicationUser, ProfileViewModel>();
+                cfg.CreateMap<ProductViewModel, ProductDto>();
+                cfg.CreateMap<ProductDto, ProductViewModel>();
+                cfg.CreateMap<ListViewModel, ListDto>();
+                cfg.CreateMap<ListDto, ListViewModel>();
+            }, typeof(Startup));
+
             // ===== Add Services
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IListService, ListService>();
             services.AddScoped<IListProductService, ListProductService>();
             services.AddScoped<IUserVoteService, UserVoteService>();
+
 
             // ===== Add MVC
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
@@ -104,17 +117,6 @@ namespace NeverEmptyPantry.WebUi
             dbContext.Database.EnsureCreated();
 
             // ===== Automapper Mappings
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<ProfileDto, ProfileViewModel>();
-                cfg.CreateMap<RegisterViewModel, RegisterDto>();
-                cfg.CreateMap<LoginDto, LoginViewModel>();
-                cfg.CreateMap<ApplicationUser, ProfileViewModel>();
-                cfg.CreateMap<ProductViewModel, ProductDto>();
-                cfg.CreateMap<ProductDto, ProductViewModel>();
-                cfg.CreateMap<ListViewModel, ListDto>();
-                cfg.CreateMap<ListDto, ListViewModel>();
-            });
         }
     }
 }
