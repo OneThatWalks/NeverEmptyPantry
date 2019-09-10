@@ -5,7 +5,7 @@
 <hr />
 @if (ViewBag.Errors != null)
 {
-    foreach (Error error in ViewBag.Errors)
+    foreach (OperationError error in ViewBag.Errors)
     {
         <span class="text-danger">@error.Code: @error.Description</span>
     }

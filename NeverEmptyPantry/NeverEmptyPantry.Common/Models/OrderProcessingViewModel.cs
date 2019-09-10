@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NeverEmptyPantry.Common.Models.List;
+using NeverEmptyPantry.Common.Models.Vote;
 
 namespace NeverEmptyPantry.Common.Models
 {

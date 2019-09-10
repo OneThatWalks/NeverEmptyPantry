@@ -1,17 +1,11 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using NeverEmptyPantry.Api.Models;
-using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
-using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Common.Util;
+using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Api.Controllers
 {
@@ -42,7 +36,7 @@ namespace NeverEmptyPantry.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var error = new Error
+                var error = new OperationError
                 {
                     Code = "900",
                     Description = "Registration model is not valid"
@@ -66,7 +60,7 @@ namespace NeverEmptyPantry.Api.Controllers
             {
                 if (!claimsPrincipal.IsInRole("Administrator"))
                 {
-                    var error = new Error
+                    var error = new OperationError
                     {
                         Code = "900",
                         Description = "User does not have high enough priveledges"
@@ -93,7 +87,7 @@ namespace NeverEmptyPantry.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var error = new Error
+                var error = new OperationError
                 {
                     Code = "900",
                     Description = "Registration model is not valid"

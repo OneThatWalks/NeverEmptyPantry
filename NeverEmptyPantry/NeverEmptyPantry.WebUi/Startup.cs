@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NeverEmptyPantry.Application.Services;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Common.Models.List;

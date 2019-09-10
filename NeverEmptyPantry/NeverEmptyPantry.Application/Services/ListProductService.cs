@@ -2,6 +2,7 @@
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.List;
 
@@ -49,7 +50,7 @@ namespace NeverEmptyPantry.Application.Services
 
             if (product == null)
             {
-                return ListProductResult.ListProductFailed(new Error
+                return ListProductResult.ListProductFailed(new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Product with id {productId} not found."

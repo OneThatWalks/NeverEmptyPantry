@@ -125,7 +125,7 @@ namespace NeverEmptyPantry.Api.Controllers
         {
             if (!Enum.TryParse(typeof(ListProductState), state, true, out var productState))
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EnumParseError,
                     Description = "Could not parse argument {state}."

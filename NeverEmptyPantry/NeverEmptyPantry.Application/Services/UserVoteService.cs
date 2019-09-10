@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Common.Models.List;
 

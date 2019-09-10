@@ -3,16 +3,17 @@ using NeverEmptyPantry.Common.Enum;
 
 namespace NeverEmptyPantry.Common.Models.List
 {
-    public class ListProduct
+    public class ListProductMap
     {
         public int Id { get; set; }
-        public Product.Product Product { get; set; }
-        public List List { get; set; }
+        public Entity.Product Product { get; set; }
+        public Entity.List List { get; set; }
         public DateTime AddedDateTime { get; set; }
         public ListProductState ListProductState { get; set; }
         public DateTime AuditDateTime { get; set; }
+        public bool Active { get; set; }
 
-        public static ListProduct From(Product.Product product, List list) => new ListProduct
+        public static ListProductMap FromProductAndList(Entity.Product product, Entity.List list) => new ListProductMap
         {
             Product = product,
             AddedDateTime = DateTime.UtcNow,

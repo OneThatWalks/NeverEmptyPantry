@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Identity;
 
 namespace NeverEmptyPantry.Common.Util

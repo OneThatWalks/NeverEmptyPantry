@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NeverEmptyPantry.Common.Interfaces.Repository;
+using NeverEmptyPantry.Common.Models.Entity;
 
 namespace NeverEmptyPantry.Repository.Services
 {
@@ -54,7 +56,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var listError = new Error
+                var listError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message
@@ -71,7 +73,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (listToUpdate == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find list with id {id}"
@@ -94,7 +96,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var listError = new Error
+                var listError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message
@@ -111,7 +113,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (listToUpdate == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find list with id {id}"
@@ -131,7 +133,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var listError = new Error
+                var listError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message

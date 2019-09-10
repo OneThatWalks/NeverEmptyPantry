@@ -1,4 +1,4 @@
-﻿namespace NeverEmptyPantry.Common.Models
+﻿namespace NeverEmptyPantry.Common.Models.Entity
 {
     public class OfficeLocation
     {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 
 namespace NeverEmptyPantry.WebUi.Models
 {

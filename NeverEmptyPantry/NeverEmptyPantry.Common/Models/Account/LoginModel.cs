@@ -2,12 +2,12 @@
 
 namespace NeverEmptyPantry.Common.Models.Account
 {
-    public class LoginDto
+    public class LoginModel
     {
         [Required]
-        public string Email { get; set; }
+        public string Username { get; set; }
+
         [Required]
         public string Password { get; set; }
-        public bool RememberMe { get; set; }
     }
 }

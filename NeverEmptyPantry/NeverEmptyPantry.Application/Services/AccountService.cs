@@ -10,6 +10,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Interfaces.Application;
+using NeverEmptyPantry.Common.Interfaces.Repository;
+using NeverEmptyPantry.Common.Models.Entity;
 
 namespace NeverEmptyPantry.Application.Services
 {
@@ -36,9 +38,9 @@ namespace NeverEmptyPantry.Application.Services
 
             if (!result.Succeeded)
             {
-                var errors = new List<Error>()
+                var errors = new List<OperationError>()
                 {
-                    new Error {Code = "500", Description = "SignInManager failed to sign in user"}
+                    new OperationError {Code = "500", Description = "SignInManager failed to sign in user"}
                 };
                 return LoginResult.LoginFailed(errors.ToArray());
             }
@@ -72,9 +74,9 @@ namespace NeverEmptyPantry.Application.Services
 
             if (!result.Succeeded)
             {
-                var errors = new List<Error>() { new Error() { Code = "500", Description = "UserManager failed to create user" } };
+                var errors = new List<OperationError>() { new OperationError() { Code = "500", Description = "UserManager failed to create user" } };
 
-                errors.AddRange(result.Errors.Select(identityError => new Error { Code = identityError.Code, Description = identityError.Description }));
+                errors.AddRange(result.Errors.Select(identityError => new OperationError { Code = identityError.Code, Description = identityError.Description }));
 
                 return RegistrationResult.RegistrationFailed(errors.ToArray());
             }
@@ -97,7 +99,7 @@ namespace NeverEmptyPantry.Application.Services
         {
             if (string.IsNullOrEmpty(email))
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = "501",
                     Description = "Query was null or empty"
@@ -109,7 +111,7 @@ namespace NeverEmptyPantry.Application.Services
 
             if (account == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = "502",
                     Description = "No account found with supplied query"
@@ -135,7 +137,7 @@ namespace NeverEmptyPantry.Application.Services
 
             if (user == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = "500",
                     Description = "Could not retrieve user"
@@ -153,11 +155,11 @@ namespace NeverEmptyPantry.Application.Services
 
             if (!result.Succeeded)
             {
-                var errors = new List<Error>();
+                var errors = new List<OperationError>();
 
-                errors.AddRange(result.Errors.Select(identityError => new Error { Code = identityError.Code, Description = identityError.Description }));
+                errors.AddRange(result.Errors.Select(identityError => new OperationError { Code = identityError.Code, Description = identityError.Description }));
 
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = "500",
                     Description = "Could not update user"
@@ -254,7 +256,7 @@ namespace NeverEmptyPantry.Application.Services
             if (user == null)
             {
                 // I can't see how this might happen
-                return ProfileResult.ProfileFailed(new Error
+                return ProfileResult.ProfileFailed(new OperationError
                 {
                     Description = "User manager failed to find user",
                     Code = "100"
@@ -267,12 +269,12 @@ namespace NeverEmptyPantry.Application.Services
                 return ProfileResult.ProfileSuccess(
                     ProfileDto.From(await _accountRepository.GetUserAsync(email)));
 
-            var newErrorArray = roleUserResult.Errors.Select(e => new Error
+            var newErrorArray = roleUserResult.Errors.Select(e => new OperationError
             {
                 Description = e.Description,
                 Code = e.Code
             }).ToList();
-            newErrorArray.Add(new Error
+            newErrorArray.Add(new OperationError
             {
                 Description = "User manager failed to add role to user",
                 Code = "100"
@@ -288,7 +290,7 @@ namespace NeverEmptyPantry.Application.Services
             if (user == null)
             {
                 // I can't see how this might happen
-                return ProfileResult.ProfileFailed(new Error
+                return ProfileResult.ProfileFailed(new OperationError
                 {
                     Description = "User manager failed to find user",
                     Code = "100"
@@ -301,12 +303,12 @@ namespace NeverEmptyPantry.Application.Services
                 return ProfileResult.ProfileSuccess(
                     ProfileDto.From(await _accountRepository.GetUserAsync(email)));
 
-            var newErrorArray = roleUserResult.Errors.Select(e => new Error
+            var newErrorArray = roleUserResult.Errors.Select(e => new OperationError
             {
                 Description = e.Description,
                 Code = e.Code
             }).ToList();
-            newErrorArray.Add(new Error
+            newErrorArray.Add(new OperationError
             {
                 Description = "User manager failed to remove role from user",
                 Code = "100"

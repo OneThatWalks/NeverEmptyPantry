@@ -12,10 +12,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NeverEmptyPantry.Application.Services;
 using NeverEmptyPantry.Common.Interfaces;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Tests.Util;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 
 namespace NeverEmptyPantry.Tests.Application
 {

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Product;
 using NeverEmptyPantry.WebUi.Models;
 

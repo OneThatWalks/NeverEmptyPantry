@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 
 namespace NeverEmptyPantry.Common.Interfaces.Application

@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Common.Models.List;
+using NeverEmptyPantry.Common.Models.Vote;
 using NeverEmptyPantry.Repository.Entity;
 
 namespace NeverEmptyPantry.Repository.Services
@@ -36,7 +39,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (listProduct == null)
             {
-                var error = new Error
+                var error = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"List Product with id {listProductId} not found."
@@ -79,7 +82,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (userProductVote == null)
             {
-                var error = new Error
+                var error = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"User Vote for {user.FirstName} not found."
@@ -116,7 +119,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (result == null)
             {
-                return UserVoteResult.VoteFailed(new Error
+                return UserVoteResult.VoteFailed(new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Vote with id {id} not found"
@@ -137,7 +140,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (result.Length == 0)
             {
-                return UserVotesResult.VoteFailed(new Error
+                return UserVotesResult.VoteFailed(new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"No votes returned for query"

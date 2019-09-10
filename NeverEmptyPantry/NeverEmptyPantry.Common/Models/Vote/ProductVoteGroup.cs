@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NeverEmptyPantry.Common.Models.List
+﻿namespace NeverEmptyPantry.Common.Models.Vote
 {
     public class ProductVoteGroup
     {

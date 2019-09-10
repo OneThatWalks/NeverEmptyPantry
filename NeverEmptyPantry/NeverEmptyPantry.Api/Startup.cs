@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using NeverEmptyPantry.Application.Services;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 using NeverEmptyPantry.Repository.Services;

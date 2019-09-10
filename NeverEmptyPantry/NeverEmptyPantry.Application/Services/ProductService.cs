@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models.Product;
 
 namespace NeverEmptyPantry.Application.Services

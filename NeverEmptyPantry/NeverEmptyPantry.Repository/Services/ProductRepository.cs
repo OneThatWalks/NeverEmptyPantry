@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NeverEmptyPantry.Common.Interfaces.Repository;
+using NeverEmptyPantry.Common.Models.Entity;
 
 namespace NeverEmptyPantry.Repository.Services
 {
@@ -40,7 +42,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var productError = new Error
+                var productError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message
@@ -61,7 +63,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (productToUpdate == null)
             {
-                var productError = new Error
+                var productError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find product with id {id}"
@@ -85,7 +87,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var productError = new Error
+                var productError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message
@@ -105,7 +107,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (productToUpdate == null)
             {
-                var productError = new Error
+                var productError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkDuplicateWarning,
                     Description = $"Could not find product with id {id}"
@@ -124,7 +126,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var productError = new Error
+                var productError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message

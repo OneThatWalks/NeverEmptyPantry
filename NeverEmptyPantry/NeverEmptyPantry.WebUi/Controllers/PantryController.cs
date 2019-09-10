@@ -8,6 +8,7 @@ using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.List;
+using NeverEmptyPantry.Common.Models.Vote;
 using NeverEmptyPantry.WebUi.Models;
 using Newtonsoft.Json;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using NeverEmptyPantry.Common.Enum;
 
-namespace NeverEmptyPantry.Common.Models.List
+namespace NeverEmptyPantry.Common.Models.Entity
 {
     public class List
     {
@@ -9,7 +9,8 @@ namespace NeverEmptyPantry.Common.Models.List
         public string Name { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
-        public OrderState OrderState { get; set; }
         public DateTime AuditDateTime { get; set; }
+        public OrderState OrderState { get; set; }
+        public bool Active { get; set; }
     }
 }

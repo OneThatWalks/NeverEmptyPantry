@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.List;
 using NeverEmptyPantry.Common.Models.Product;
 using NeverEmptyPantry.Repository.Entity;
 
 namespace NeverEmptyPantry.Repository.Services
 {
+    [ExcludeFromCodeCoverage]
     public class ListProductRepository : IListProductRepository
     {
         private readonly ApplicationDbContext _context;
@@ -26,7 +30,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (list == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find list with id {listId}"
@@ -46,7 +50,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (list == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find list with id {listId}"
@@ -58,7 +62,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (product == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find product with id {productId}"
@@ -81,7 +85,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (list == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find list with id {listId}"
@@ -93,7 +97,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (existsingListProduct != null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkDuplicateWarning,
                     Description = $"Product with id {product.Id} already exists on list with id {listId}"
@@ -103,7 +107,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (product == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find product with id {listId}"
@@ -121,7 +125,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var listError = new Error
+                var listError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message
@@ -139,7 +143,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (list == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find list with id {listId}"
@@ -151,7 +155,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (product == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find product with id {listId}"
@@ -170,7 +174,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var listError = new Error
+                var listError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message
@@ -188,7 +192,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (list == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find list with id {listId}"
@@ -200,7 +204,7 @@ namespace NeverEmptyPantry.Repository.Services
 
             if (product == null)
             {
-                var err = new Error
+                var err = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkNotFoundError,
                     Description = $"Could not find product with id {listId}"
@@ -219,7 +223,7 @@ namespace NeverEmptyPantry.Repository.Services
             }
             catch (Exception e)
             {
-                var listError = new Error
+                var listError = new OperationError
                 {
                     Code = ErrorCodes.EntityFrameworkGeneralError,
                     Description = e.Message

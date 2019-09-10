@@ -1,4 +1,4 @@
-﻿namespace NeverEmptyPantry.Common.Models.Identity
+﻿namespace NeverEmptyPantry.Common.Models.Account
 {
     public class JwtDetail
     {

@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NeverEmptyPantry.Common.Interfaces;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 
 namespace NeverEmptyPantry.Repository.Services
 {
+    [ExcludeFromCodeCoverage]
     public class AccountRepository : IAccountRepository
     {
         private readonly ApplicationDbContext _context;

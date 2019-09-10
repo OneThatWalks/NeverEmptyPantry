@@ -11,6 +11,7 @@ using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.List;
 using NeverEmptyPantry.Common.Models.Product;
+using NeverEmptyPantry.Common.Models.Vote;
 
 namespace NeverEmptyPantry.WebUi.Controllers
 {

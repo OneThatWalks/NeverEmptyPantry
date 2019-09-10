@@ -1,9 +1,9 @@
-﻿using System;
-using NeverEmptyPantry.Common.Enum;
+﻿using NeverEmptyPantry.Common.Models.Entity;
+using System;
 
 namespace NeverEmptyPantry.Common.Models.Product
 {
-    public class ProductDto
+    public class ProductModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -15,9 +15,9 @@ namespace NeverEmptyPantry.Common.Models.Product
         public DateTime AddedDateTime { get; set; }
         public bool Active { get; set; }
 
-        public static ProductDto From(Product product)
+        public static ProductModel FromProduct(Entity.Product product)
         {
-            return new ProductDto
+            return new ProductModel
             {
                 Id = product.Id,
                 Name = product.Name,

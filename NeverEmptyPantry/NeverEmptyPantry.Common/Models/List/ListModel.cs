@@ -3,7 +3,7 @@ using NeverEmptyPantry.Common.Enum;
 
 namespace NeverEmptyPantry.Common.Models.List
 {
-    public class ListDto
+    public class ListModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -12,7 +12,7 @@ namespace NeverEmptyPantry.Common.Models.List
         public OrderState OrderState { get; set; }
         public DateTime AuditDateTime { get; set; }
 
-        public static ListDto From(List list) => new ListDto
+        public static ListModel FromList(Entity.List list) => new ListModel
         {
             Id = list.Id,
             Name = list.Name,

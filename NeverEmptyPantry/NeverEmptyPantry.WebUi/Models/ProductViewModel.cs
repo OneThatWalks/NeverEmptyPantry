@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NeverEmptyPantry.Common.Enum;
+using NeverEmptyPantry.Common.Models.Entity;
+using NeverEmptyPantry.Common.Models.Product;
 
 namespace NeverEmptyPantry.WebUi.Models
 {

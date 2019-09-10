@@ -5,8 +5,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NeverEmptyPantry.Application.Services;
 using NeverEmptyPantry.Common.Interfaces;
+using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.List;
+using NeverEmptyPantry.Common.Models.Vote;
 
 namespace NeverEmptyPantry.Tests.Application
 {

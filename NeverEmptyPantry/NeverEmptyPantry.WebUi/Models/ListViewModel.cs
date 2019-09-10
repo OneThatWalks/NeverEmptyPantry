@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.List;
+using NeverEmptyPantry.Common.Models.Vote;
 
 namespace NeverEmptyPantry.WebUi.Models
 {
