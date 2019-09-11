@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using NeverEmptyPantry.Common.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
 using NeverEmptyPantry.Common.Interfaces.Repository;
-using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Repository.Services
 {
@@ -21,15 +19,19 @@ namespace NeverEmptyPantry.Repository.Services
             _context = context;
         }
 
-        public async Task<ApplicationUser> GetUserAsync(string email)
+        public Task<ApplicationUser> GetUserByUserNameAsync(string username)
         {
-            var appUser = await _context.Users.FirstOrDefaultAsync(user => email.Equals(user.Email));
+            return _context.Users.FirstOrDefaultAsync(user => username.Equals(user.UserName));
+        }
 
-            return appUser;
+        public Task<ApplicationUser> GetUserByEmailAsync(string email)
+        {
+            return _context.Users.FirstOrDefaultAsync(user => email.Equals(user.Email));
         }
 
         public async Task<IEnumerable<OfficeLocation>> GetOfficeLocations()
         {
+            // Await this "pass-through" since the return type is IEnumerable
             var locations = await _context.OfficeLocations.ToListAsync();
 
             return locations;
@@ -37,6 +39,7 @@ namespace NeverEmptyPantry.Repository.Services
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
         {
+            // Await this "pass-through" since the return type is IEnumerable
             var users = await _context.Users.ToListAsync();
 
             return users;

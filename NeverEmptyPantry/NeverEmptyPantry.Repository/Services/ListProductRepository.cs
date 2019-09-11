@@ -1,16 +1,16 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NeverEmptyPantry.Common.Enum;
-using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.List;
-using NeverEmptyPantry.Common.Models.Product;
 using NeverEmptyPantry.Repository.Entity;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace NeverEmptyPantry.Repository.Services
 {
@@ -24,214 +24,154 @@ namespace NeverEmptyPantry.Repository.Services
             _context = context;
         }
 
-        public async Task<ListProductsResult> GetListProductsAsync(int listId)
+        public async Task<IEnumerable<ListProductMap>> GetListProductsAsync(int listId)
         {
             var list = await _context.Lists.SingleOrDefaultAsync(l => l.Id == listId);
 
             if (list == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find list with id {listId}"
-                };
-                return ListProductsResult.ListProductsFailed(err);
+                throw new Exception($"List not found with id {listId}");
             }
 
-            var products = await _context.ListProducts.Include("Product").Where(p => p.List == list).ToListAsync();
+            var products = await _context.ListProducts.Include("Product").Include("List").Where(p => p.List == list).ToListAsync();
 
-            return ListProductsResult.ListProductsSuccess(products.Select(ListProductDto.From).ToArray());
+            return products;
         }
 
-
-        public async Task<ListProductResult> GetListProductAsync(int listId, int productId)
+        public async Task<ListProductMap> GetListProductAsync(int listId, int productId)
         {
             var list = await _context.Lists.SingleOrDefaultAsync(l => l.Id == listId);
 
             if (list == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find list with id {listId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                throw new Exception($"List not found with id {listId}");
             }
 
-            var product = await _context.ListProducts.Include("Product").Where(p => p.List == list).SingleOrDefaultAsync(y => y.Product.Id == productId);
+            var product = await _context.ListProducts.Include("Product").Include("List").Where(p => p.List == list).SingleOrDefaultAsync(y => y.Product.Id == productId);
 
             if (product == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find product with id {productId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                throw new Exception($"Product not found with id {productId}");
             }
 
-            return ListProductResult.ListProductSuccess(ListProductDto.From(product), null);
+            return product;
         }
 
-        public async Task<ListProductResult> GetListProductAsync(int listProductId)
+        public async Task<ListProductMap> AddListProductAsync(ListProductMap listProductMap)
         {
-            throw new NotImplementedException();
-        }
-
-
-        public async Task<ListProductResult> AddListProductAsync(int listId, Product product)
-        {
-            var list = await _context.Lists.SingleOrDefaultAsync(l => l.Id == listId);
+            var list = await _context.Lists.SingleOrDefaultAsync(l => l.Id == listProductMap.List.Id);
 
             if (list == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find list with id {listId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                throw new Exception($"List not found with id {listProductMap.List.Id}");
             }
 
-            var existsingListProduct = await _context.ListProducts.Include("Product").Where(p => p.List == list).SingleOrDefaultAsync(y => y.Product.Id == product.Id);
+            var existingListProduct = await _context.ListProducts.Include("Product").Include("List").Where(p => p.List == list).SingleOrDefaultAsync(y => y.Product.Id == listProductMap.Product.Id);
 
-            if (existsingListProduct != null)
+            if (existingListProduct != null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkDuplicateWarning,
-                    Description = $"Product with id {product.Id} already exists on list with id {listId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                // Already exists
+                return existingListProduct;
             }
+
+            var product = await _context.Products.SingleOrDefaultAsync(p => p.Id == listProductMap.Product.Id);
 
             if (product == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find product with id {listId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                throw new Exception($"Product not found with id {listProductMap.Product.Id}");
             }
 
-            var listProductToAdd = ListProduct.From(product, list);
+            EntityEntry<ListProductMap> entityResult;
 
             try
             {
-                await _context.ListProducts.AddAsync(listProductToAdd);
+                entityResult = await _context.ListProducts.AddAsync(listProductMap);
+                await _context.AuditLog.AddAsync(AuditLog.From(listProductMap, AuditAction.CREATE, null));
 
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                var listError = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkGeneralError,
-                    Description = e.Message
-                };
-                return ListProductResult.ListProductFailed(listError);
+                throw new Exception("There was an issue saving the entity.  See inner exception for more details.", e);
             }
 
-            return ListProductResult.ListProductSuccess(ListProductDto.From(listProductToAdd), null);
+            return entityResult.Entity;
         }
 
 
-        public async Task<ListProductResult> RemoveListProductAsync(int listId, int productId)
+        public async Task<ListProductMap> RemoveListProductAsync(ListProductMap listProductMap, bool hardDelete = false)
         {
-            var list = await _context.Lists.SingleOrDefaultAsync(l => l.Id == listId);
+            var list = await _context.Lists.SingleOrDefaultAsync(l => l.Id == listProductMap.List.Id);
 
             if (list == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find list with id {listId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                throw new Exception($"List not found with id {listProductMap.List.Id}");
             }
 
-            var product = await _context.ListProducts.Include("Product").Where(p => p.List == list).SingleOrDefaultAsync(y => y.Product.Id == productId);
+            var listProduct = await _context.ListProducts.Include("Product").Include("List").Where(p => p.List == list).SingleOrDefaultAsync(y => y.Product.Id == listProductMap.Product.Id);
 
-            if (product == null)
+            if (listProduct == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find product with id {listId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                throw new Exception($"List product not found with id {listProductMap.Product.Id}");
             }
 
-            product.AuditDateTime = DateTime.UtcNow;
-            product.ListProductState = ListProductState.ITEM_REMOVED;
-
-            _context.ListProducts.Update(product);
+            EntityEntry<ListProductMap> entityResult;
 
             try
             {
+                if (hardDelete)
+                {
+                    await _context.AuditLog.AddAsync(AuditLog.From(listProduct, AuditAction.HARD_DELETE, null));
+                    entityResult = _context.ListProducts.Remove(listProduct);
+                }
+                else
+                {
+                    await _context.AuditLog.AddAsync(AuditLog.From(listProduct, AuditAction.SOFT_DELETE, null));
+                    entityResult = _context.ListProducts.Update(listProduct);
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                var listError = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkGeneralError,
-                    Description = e.Message
-                };
-                return ListProductResult.ListProductFailed(listError);
+                throw new Exception("There was an issue saving the entity.  See inner exception for more details.", e);
             }
 
-            return ListProductResult.ListProductSuccess(ListProductDto.From(product), null);
+            return entityResult.Entity;
         }
 
 
-        public async Task<ListProductResult> UpdateListProductStateAsync(int listId, int productId, ListProductState state)
+        public async Task<ListProductMap> UpdateListProductMap(ListProductMap listProductMap)
         {
-            var list = await _context.Lists.SingleOrDefaultAsync(l => l.Id == listId);
+            var list = await _context.Lists.SingleOrDefaultAsync(l => l.Id == listProductMap.List.Id);
 
             if (list == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find list with id {listId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                throw new Exception($"List not found with id {listProductMap.List.Id}");
             }
 
-            var product = await _context.ListProducts.Include("Product").Where(p => p.List == list).SingleOrDefaultAsync(y => y.Product.Id == productId);
+            var listProduct = await _context.ListProducts.Include("Product").Include("List").Where(p => p.List == list).SingleOrDefaultAsync(y => y.Product.Id == listProductMap.Product.Id);
 
-            if (product == null)
+            if (listProduct == null)
             {
-                var err = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkNotFoundError,
-                    Description = $"Could not find product with id {listId}"
-                };
-                return ListProductResult.ListProductFailed(err);
+                throw new Exception($"List product not found with id {listProductMap.Product.Id}");
             }
 
-            product.AuditDateTime = DateTime.UtcNow;
-            product.ListProductState = state;
-
-            _context.ListProducts.Update(product);
+            EntityEntry<ListProductMap> entityResult;
 
             try
             {
+                entityResult = _context.ListProducts.Update(listProduct);
+                await _context.AuditLog.AddAsync(AuditLog.From(listProductMap, AuditAction.UPDATE, null));
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                var listError = new OperationError
-                {
-                    Code = ErrorCodes.EntityFrameworkGeneralError,
-                    Description = e.Message
-                };
-                return ListProductResult.ListProductFailed(listError);
+                throw new Exception("There was an issue saving the entity.  See inner exception for more details.", e);
             }
 
-            return ListProductResult.ListProductSuccess(ListProductDto.From(product), null);
+            return entityResult.Entity;
         }
     }
 }

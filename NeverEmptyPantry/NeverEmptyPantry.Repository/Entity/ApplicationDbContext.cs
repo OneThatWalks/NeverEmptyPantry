@@ -25,17 +25,40 @@ namespace NeverEmptyPantry.Repository.Entity
         public DbSet<ListProductMap> ListProducts { get; set; }
         public DbSet<UserProductVote> UserProductVotes { get; set; }
         public DbSet<OfficeLocation> OfficeLocations { get; set; }
+        public DbSet<AuditLog> AuditLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<Product>().ToTable("Product");
-            builder.Entity<Category>().ToTable("Categories");
-            builder.Entity<List>().ToTable("List").Property(e => e.OrderState).HasConversion(new EnumToStringConverter<OrderState>());
-            builder.Entity<ListProductMap>().ToTable("ListProduct").Property(e => e.ListProductState).HasConversion(new EnumToStringConverter<ListProductState>());
-            builder.Entity<UserProductVote>().ToTable("UserProductVote").Property(e => e.UserProductVoteState).HasConversion(new EnumToStringConverter<UserProductVoteState>());
-            builder.Entity<OfficeLocation>().ToTable("OfficeLocation");
 
+            builder.Entity<Product>()
+                .ToTable("Product");
+
+            builder.Entity<Category>()
+                .ToTable("Categories");
+
+            builder.Entity<List>()
+                .ToTable("List")
+                .Property(e => e.OrderState)
+                .HasConversion(new EnumToStringConverter<OrderState>());
+
+            builder.Entity<ListProductMap>()
+                .ToTable("ListProduct")
+                .Property(e => e.ListProductState)
+                .HasConversion(new EnumToStringConverter<ListProductState>());
+
+            builder.Entity<UserProductVote>()
+                .ToTable("UserProductVote")
+                .Property(e => e.UserProductVoteState)
+                .HasConversion(new EnumToStringConverter<UserProductVoteState>());
+
+            builder.Entity<OfficeLocation>()
+                .ToTable("OfficeLocation");
+
+            builder.Entity<AuditLog>()
+                .ToTable("AuditLog")
+                .Property(e => e.AuditAction)
+                .HasConversion(new EnumToStringConverter<AuditAction>());
         }
     }
 
