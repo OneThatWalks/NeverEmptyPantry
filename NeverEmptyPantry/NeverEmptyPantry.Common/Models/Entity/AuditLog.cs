@@ -1,26 +1,38 @@
-﻿using System;
+﻿using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models.Identity;
-using NeverEmptyPantry.Common.Models.List;
 using Newtonsoft.Json;
+using System;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace NeverEmptyPantry.Common.Models.Entity
 {
-    public class AuditLog
+    public class AuditLog : BaseEntity
     {
-        public int Id { get; set; }
         public AuditAction AuditAction { get; set; }
         public DateTime DateTimeUtc { get; set; }
-        public string Json { get; set; }
+        public string BeforeAuditJson { get; set; }
+        public string AfterAuditJson { get; set; }
         public ApplicationUser User { get; set; }
 
-        public static AuditLog From<T>(T entity, AuditAction action, ApplicationUser user)
+        public static AuditLog From<T>(EntityEntry<T> entity, AuditAction action, ApplicationUser user) where T : BaseEntity
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             return new AuditLog()
             {
                 Id = 0,
                 AuditAction = action,
                 DateTimeUtc = DateTime.UtcNow,
-                Json = JsonConvert.SerializeObject(entity),
+                BeforeAuditJson = JsonConvert.SerializeObject(entity.OriginalValues.ToObject()),
+                AfterAuditJson = JsonConvert.SerializeObject(entity.CurrentValues.ToObject()),
                 User = user
             };
         }

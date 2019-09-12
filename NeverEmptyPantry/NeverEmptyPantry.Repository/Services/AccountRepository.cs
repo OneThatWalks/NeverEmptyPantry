@@ -6,6 +6,7 @@ using NeverEmptyPantry.Repository.Entity;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace NeverEmptyPantry.Repository.Services
 {
@@ -43,6 +44,13 @@ namespace NeverEmptyPantry.Repository.Services
             var users = await _context.Users.ToListAsync();
 
             return users;
+        }
+
+        public Task<ApplicationUser> GetUserOrSystemAsync(string userId)
+        {
+            var user = _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(userId)) ?? _context.Users.FirstOrDefaultAsync(u => u.UserName.Equals("System"));
+
+            return user;
         }
     }
 }

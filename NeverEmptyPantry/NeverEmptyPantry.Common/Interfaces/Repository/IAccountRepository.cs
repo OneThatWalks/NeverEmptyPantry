@@ -32,5 +32,12 @@ namespace NeverEmptyPantry.Common.Interfaces.Repository
         /// </summary>
         /// <returns>A task result that represents all of the users</returns>
         Task<IEnumerable<ApplicationUser>> GetAllUsers();
+
+        /// <summary>
+        /// Gets the user if user exists otherwise the system user
+        /// </summary>
+        /// <param name="userId">The user id to query for</param>
+        /// <returns>A task result that represents the user</returns>
+        Task<ApplicationUser> GetUserOrSystemAsync(string userId);
     }
 }
