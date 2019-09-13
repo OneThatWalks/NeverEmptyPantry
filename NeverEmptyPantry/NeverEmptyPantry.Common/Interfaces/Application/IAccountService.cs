@@ -1,32 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using System;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
-using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Common.Interfaces.Application
 {
     public interface IAccountService
     {
-        Task<LoginResult> LoginAsync(LoginDto model);
-        Task<RegistrationResult> RegisterAsync(RegisterDto model);
-        Task<ProfileResult> GetProfileAsync(string email);
-        Task<ApplicationUser> GetUserFromClaimsPrincipal(ClaimsPrincipal claimsPrincipal);
-        Task<ProfileResult> SetProfileAsync(ProfileDto model);
-        Task<LogoutResult> LogoutAsync();
-        Task<IEnumerable<OfficeLocation>> GetOfficeLocations();
+        /// <summary>
+        /// Registers a new user
+        /// </summary>
+        /// <param name="model">The registration model</param>
+        /// <returns>A task result that represents the completion of the register operation</returns>
+        Task<IOperationResult> RegisterAsync(RegistrationModel model);
 
-        Task<IEnumerable<IdentityRole>> GetRoles();
-        Task<IEnumerable<string>> GetUserRoles(string email);
-        Task<IdentityResult> CreateRole(string name);
-        Task<IdentityResult> RemoveRole(string name);
-        Task<IdentityResult> UpdateRole(string name, string newName);
-        Task<ProfileResult> AddUserToRole(string email, string roleName);
-        Task<ProfileResult> RemoveUserFromRole(string email, string roleName);
-
-        Task<IEnumerable<ApplicationUser>> GetAllUsers();
+        /// <summary>
+        /// Gets a user based on a query, if multiple users match the query only the first is returned
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        Task<IOperationResult<ProfileModel>> GetProfileAsync(Func<ApplicationUser, bool> query);
+        Task<IOperationResult<ProfileModel>> UpdateProfileAsync(ProfileModel model);
     }
 }

@@ -3,21 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NeverEmptyPantry.Repository.Entity;
 
 namespace NeverEmptyPantry.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180621144905_initialCreate")]
-    partial class initialCreate
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -131,7 +129,196 @@ namespace NeverEmptyPantry.Repository.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("NeverEmptyPantry.Common.Models.ApplicationUser", b =>
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.AuditLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("AfterAuditJson");
+
+                    b.Property<string>("AuditAction")
+                        .IsRequired();
+
+                    b.Property<string>("BeforeAuditJson");
+
+                    b.Property<DateTime>("CreatedDateTimeUtc");
+
+                    b.Property<DateTime>("DateTimeUtc");
+
+                    b.Property<DateTime>("ModifiedDateTimeUtc");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AuditLog");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.List", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<DateTime>("CreatedDateTimeUtc");
+
+                    b.Property<DateTime>("EndDateTime");
+
+                    b.Property<DateTime>("ModifiedDateTimeUtc");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("OrderState")
+                        .IsRequired();
+
+                    b.Property<DateTime>("StartDateTime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("List");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.ListProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<DateTime>("CreatedDateTimeUtc");
+
+                    b.Property<int?>("ListId");
+
+                    b.Property<string>("ListProductState")
+                        .IsRequired();
+
+                    b.Property<DateTime>("ModifiedDateTimeUtc");
+
+                    b.Property<int?>("ProductId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ListProduct");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.OfficeLocation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("Address");
+
+                    b.Property<string>("City");
+
+                    b.Property<string>("Country");
+
+                    b.Property<DateTime>("CreatedDateTimeUtc");
+
+                    b.Property<DateTime>("ModifiedDateTimeUtc");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("State");
+
+                    b.Property<string>("Zip");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OfficeLocation");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("Brand");
+
+                    b.Property<int?>("CategoryId");
+
+                    b.Property<DateTime>("CreatedDateTimeUtc");
+
+                    b.Property<string>("Image");
+
+                    b.Property<DateTime>("ModifiedDateTimeUtc");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("PackSize");
+
+                    b.Property<string>("UnitSize");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.UserListProductVote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("ApplicationUserId");
+
+                    b.Property<DateTime>("CreatedDateTimeUtc");
+
+                    b.Property<int?>("ListId");
+
+                    b.Property<DateTime>("ModifiedDateTimeUtc");
+
+                    b.Property<int?>("ProductId");
+
+                    b.Property<string>("UserProductVoteState")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("ListId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("UserListProductVote");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -160,7 +347,7 @@ namespace NeverEmptyPantry.Repository.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
 
-                    b.Property<int>("OfficeLocationId");
+                    b.Property<int?>("OfficeLocationId");
 
                     b.Property<string>("PasswordHash");
 
@@ -187,128 +374,23 @@ namespace NeverEmptyPantry.Repository.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("OfficeLocationId");
+
                     b.ToTable("AspNetUsers");
-                });
 
-            modelBuilder.Entity("NeverEmptyPantry.Common.Models.List", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("AuditDateTime");
-
-                    b.Property<DateTime>("EndDateTime");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("OrderState");
-
-                    b.Property<DateTime>("StartDateTime");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("List");
-                });
-
-            modelBuilder.Entity("NeverEmptyPantry.Common.Models.ListProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("AddedDateTime");
-
-                    b.Property<DateTime>("AuditDateTime");
-
-                    b.Property<int?>("ListId");
-
-                    b.Property<int>("ListProductState");
-
-                    b.Property<int?>("ProductId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ListId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ListProduct");
-                });
-
-            modelBuilder.Entity("NeverEmptyPantry.Common.Models.OfficeLocation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address");
-
-                    b.Property<string>("City");
-
-                    b.Property<string>("Country");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("State");
-
-                    b.Property<string>("Zip");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OfficeLocation");
-                });
-
-            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<DateTime>("AddedDateTime");
-
-                    b.Property<string>("Brand");
-
-                    b.Property<int>("Category");
-
-                    b.Property<string>("Image");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("PackSize");
-
-                    b.Property<string>("UnitSize");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("NeverEmptyPantry.Common.Models.UserProductVote", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("AddedDateTime");
-
-                    b.Property<string>("ApplicationUserId");
-
-                    b.Property<DateTime>("AuditDateTime");
-
-                    b.Property<int?>("ListProductId");
-
-                    b.Property<int>("UserProductVoteState");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("ListProductId");
-
-                    b.ToTable("UserProductVote");
+                    b.HasData(
+                        new
+                        {
+                            Id = "3d075d96-482b-46ad-96ff-bb543721d80a",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "199f2a5a-7e87-4e83-b465-7c8dc6171ec7",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            PasswordHash = "AQAAAAEAACcQAAAAEP8eOrQHBe8pnh+jfkkGszit1BZDOsx+mo2EVU54NDeb7d5J2YdEHnLtuQwUjEIpKQ==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "System"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -321,7 +403,7 @@ namespace NeverEmptyPantry.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("NeverEmptyPantry.Common.Models.ApplicationUser")
+                    b.HasOne("NeverEmptyPantry.Common.Models.Identity.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -329,7 +411,7 @@ namespace NeverEmptyPantry.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("NeverEmptyPantry.Common.Models.ApplicationUser")
+                    b.HasOne("NeverEmptyPantry.Common.Models.Identity.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -342,7 +424,7 @@ namespace NeverEmptyPantry.Repository.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("NeverEmptyPantry.Common.Models.ApplicationUser")
+                    b.HasOne("NeverEmptyPantry.Common.Models.Identity.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -350,32 +432,57 @@ namespace NeverEmptyPantry.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("NeverEmptyPantry.Common.Models.ApplicationUser")
+                    b.HasOne("NeverEmptyPantry.Common.Models.Identity.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("NeverEmptyPantry.Common.Models.ListProduct", b =>
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.AuditLog", b =>
                 {
-                    b.HasOne("NeverEmptyPantry.Common.Models.List", "List")
+                    b.HasOne("NeverEmptyPantry.Common.Models.Identity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.ListProduct", b =>
+                {
+                    b.HasOne("NeverEmptyPantry.Common.Models.Entity.List", "List")
                         .WithMany()
                         .HasForeignKey("ListId");
 
-                    b.HasOne("NeverEmptyPantry.Common.Models.Product", "Product")
+                    b.HasOne("NeverEmptyPantry.Common.Models.Entity.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
                 });
 
-            modelBuilder.Entity("NeverEmptyPantry.Common.Models.UserProductVote", b =>
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.Product", b =>
                 {
-                    b.HasOne("NeverEmptyPantry.Common.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("NeverEmptyPantry.Common.Models.Entity.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Entity.UserListProductVote", b =>
+                {
+                    b.HasOne("NeverEmptyPantry.Common.Models.Identity.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("NeverEmptyPantry.Common.Models.ListProduct", "ListProduct")
+                    b.HasOne("NeverEmptyPantry.Common.Models.Entity.List", "List")
                         .WithMany()
-                        .HasForeignKey("ListProductId");
+                        .HasForeignKey("ListId");
+
+                    b.HasOne("NeverEmptyPantry.Common.Models.Entity.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+                });
+
+            modelBuilder.Entity("NeverEmptyPantry.Common.Models.Identity.ApplicationUser", b =>
+                {
+                    b.HasOne("NeverEmptyPantry.Common.Models.Entity.OfficeLocation", "OfficeLocation")
+                        .WithMany()
+                        .HasForeignKey("OfficeLocationId");
                 });
 #pragma warning restore 612, 618
         }

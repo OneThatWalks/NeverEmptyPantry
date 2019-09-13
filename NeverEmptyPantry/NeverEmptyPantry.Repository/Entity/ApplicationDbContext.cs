@@ -4,11 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
 using NeverEmptyPantry.Common.Enum;
-using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
-using NeverEmptyPantry.Common.Models.List;
-using NeverEmptyPantry.Common.Models.Product;
 
 namespace NeverEmptyPantry.Repository.Entity
 {
@@ -22,8 +19,8 @@ namespace NeverEmptyPantry.Repository.Entity
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<List> Lists { get; set; }
-        public DbSet<ListProductMap> ListProducts { get; set; }
-        public DbSet<UserProductVote> UserProductVotes { get; set; }
+        public DbSet<ListProduct> ListProducts { get; set; }
+        public DbSet<UserListProductVote> UserListProductVotes { get; set; }
         public DbSet<OfficeLocation> OfficeLocations { get; set; }
         public DbSet<AuditLog> AuditLog { get; set; }
 
@@ -42,13 +39,13 @@ namespace NeverEmptyPantry.Repository.Entity
                 .Property(e => e.OrderState)
                 .HasConversion(new EnumToStringConverter<OrderState>());
 
-            builder.Entity<ListProductMap>()
+            builder.Entity<ListProduct>()
                 .ToTable("ListProduct")
                 .Property(e => e.ListProductState)
                 .HasConversion(new EnumToStringConverter<ListProductState>());
 
-            builder.Entity<UserProductVote>()
-                .ToTable("UserProductVote")
+            builder.Entity<UserListProductVote>()
+                .ToTable("UserListProductVote")
                 .Property(e => e.UserProductVoteState)
                 .HasConversion(new EnumToStringConverter<UserProductVoteState>());
 
@@ -59,6 +56,18 @@ namespace NeverEmptyPantry.Repository.Entity
                 .ToTable("AuditLog")
                 .Property(e => e.AuditAction)
                 .HasConversion(new EnumToStringConverter<AuditAction>());
+
+            var system = new ApplicationUser {
+                UserName = "System",
+                TwoFactorEnabled = false,
+                EmailConfirmed = true
+            };
+
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            system.PasswordHash = passwordHasher.HashPassword(system, "FGsltw316");
+
+            builder.Entity<ApplicationUser>()
+                .HasData(system);
         }
     }
 

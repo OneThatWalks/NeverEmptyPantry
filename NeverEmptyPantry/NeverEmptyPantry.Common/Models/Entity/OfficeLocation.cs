@@ -1,8 +1,7 @@
 ﻿namespace NeverEmptyPantry.Common.Models.Entity
 {
-    public class OfficeLocation
+    public class OfficeLocation : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string City { get; set; }

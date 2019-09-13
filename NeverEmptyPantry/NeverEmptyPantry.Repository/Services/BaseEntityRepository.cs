@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NeverEmptyPantry.Common.Enum;
 
 namespace NeverEmptyPantry.Repository.Services
 {
@@ -110,7 +111,7 @@ namespace NeverEmptyPantry.Repository.Services
                 // Create and add the audit entry
                 var user = await _accountRepository.GetUserOrSystemAsync(userId);
 
-                await _context.AuditLog.AddAsync(AuditLog.From(entityEntry, AuditAction.UPDATE, user));
+                await _context.AuditLog.AddAsync(AuditLog.From(entityEntry, AuditAction.DELETE, user));
 
                 await _context.SaveChangesAsync();
             }

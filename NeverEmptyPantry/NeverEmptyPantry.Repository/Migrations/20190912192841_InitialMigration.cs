@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NeverEmptyPantry.Repository.Migrations
 {
-    public partial class initialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -23,32 +23,16 @@ namespace NeverEmptyPantry.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "Categories",
                 columns: table => new
                 {
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    Id = table.Column<string>(nullable: false),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    Email = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    OfficeLocationId = table.Column<int>(nullable: false),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true)
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,11 +41,13 @@ namespace NeverEmptyPantry.Repository.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Active = table.Column<bool>(nullable: false),
+                    CreatedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    ModifiedDateTimeUtc = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     StartDateTime = table.Column<DateTime>(nullable: false),
                     EndDateTime = table.Column<DateTime>(nullable: false),
-                    OrderState = table.Column<int>(nullable: false),
-                    AuditDateTime = table.Column<DateTime>(nullable: false)
+                    OrderState = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,6 +60,9 @@ namespace NeverEmptyPantry.Repository.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Active = table.Column<bool>(nullable: false),
+                    CreatedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    ModifiedDateTimeUtc = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Address = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
@@ -84,26 +73,6 @@ namespace NeverEmptyPantry.Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OfficeLocation", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Product",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true),
-                    Brand = table.Column<string>(nullable: true),
-                    PackSize = table.Column<int>(nullable: false),
-                    UnitSize = table.Column<string>(nullable: true),
-                    Category = table.Column<int>(nullable: false),
-                    Image = table.Column<string>(nullable: true),
-                    AddedDateTime = table.Column<DateTime>(nullable: false),
-                    Active = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Product", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -125,6 +94,98 @@ namespace NeverEmptyPantry.Repository.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Active = table.Column<bool>(nullable: false),
+                    CreatedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    ModifiedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Brand = table.Column<string>(nullable: true),
+                    PackSize = table.Column<int>(nullable: false),
+                    UnitSize = table.Column<string>(nullable: true),
+                    Image = table.Column<string>(nullable: true),
+                    CategoryId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Product_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    UserName = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
+                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    SecurityStamp = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    OfficeLocationId = table.Column<int>(nullable: true),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    Title = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_OfficeLocation_OfficeLocationId",
+                        column: x => x.OfficeLocationId,
+                        principalTable: "OfficeLocation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ListProduct",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Active = table.Column<bool>(nullable: false),
+                    CreatedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    ModifiedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    ProductId = table.Column<int>(nullable: true),
+                    ListId = table.Column<int>(nullable: true),
+                    ListProductState = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ListProduct", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ListProduct_List_ListId",
+                        column: x => x.ListId,
+                        principalTable: "List",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ListProduct_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,62 +274,72 @@ namespace NeverEmptyPantry.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ListProduct",
+                name: "AuditLog",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ProductId = table.Column<int>(nullable: true),
-                    ListId = table.Column<int>(nullable: true),
-                    AddedDateTime = table.Column<DateTime>(nullable: false),
-                    ListProductState = table.Column<int>(nullable: false),
-                    AuditDateTime = table.Column<DateTime>(nullable: false)
+                    Active = table.Column<bool>(nullable: false),
+                    CreatedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    ModifiedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    AuditAction = table.Column<string>(nullable: false),
+                    DateTimeUtc = table.Column<DateTime>(nullable: false),
+                    BeforeAuditJson = table.Column<string>(nullable: true),
+                    AfterAuditJson = table.Column<string>(nullable: true),
+                    UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ListProduct", x => x.Id);
+                    table.PrimaryKey("PK_AuditLog", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ListProduct_List_ListId",
+                        name: "FK_AuditLog_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserListProductVote",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Active = table.Column<bool>(nullable: false),
+                    CreatedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    ModifiedDateTimeUtc = table.Column<DateTime>(nullable: false),
+                    UserProductVoteState = table.Column<string>(nullable: false),
+                    ApplicationUserId = table.Column<string>(nullable: true),
+                    ProductId = table.Column<int>(nullable: true),
+                    ListId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserListProductVote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserListProductVote_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserListProductVote_List_ListId",
                         column: x => x.ListId,
                         principalTable: "List",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ListProduct_Product_ProductId",
+                        name: "FK_UserListProductVote_Product_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Product",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "UserProductVote",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ApplicationUserId = table.Column<string>(nullable: true),
-                    ListProductId = table.Column<int>(nullable: true),
-                    AddedDateTime = table.Column<DateTime>(nullable: false),
-                    UserProductVoteState = table.Column<int>(nullable: false),
-                    AuditDateTime = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserProductVote", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserProductVote_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserProductVote_ListProduct_ListProductId",
-                        column: x => x.ListProductId,
-                        principalTable: "ListProduct",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OfficeLocationId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "Title", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "3d075d96-482b-46ad-96ff-bb543721d80a", 0, "199f2a5a-7e87-4e83-b465-7c8dc6171ec7", null, true, null, null, false, null, null, null, null, "AQAAAAEAACcQAAAAEP8eOrQHBe8pnh+jfkkGszit1BZDOsx+mo2EVU54NDeb7d5J2YdEHnLtuQwUjEIpKQ==", null, false, null, null, false, "System" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -310,6 +381,16 @@ namespace NeverEmptyPantry.Repository.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_OfficeLocationId",
+                table: "AspNetUsers",
+                column: "OfficeLocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLog_UserId",
+                table: "AuditLog",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ListProduct_ListId",
                 table: "ListProduct",
                 column: "ListId");
@@ -320,35 +401,24 @@ namespace NeverEmptyPantry.Repository.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProductVote_ApplicationUserId",
-                table: "UserProductVote",
+                name: "IX_Product_CategoryId",
+                table: "Product",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserListProductVote_ApplicationUserId",
+                table: "UserListProductVote",
                 column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProductVote_ListProductId",
-                table: "UserProductVote",
-                column: "ListProductId");
+                name: "IX_UserListProductVote_ListId",
+                table: "UserListProductVote",
+                column: "ListId");
 
-            migrationBuilder.Sql(@"INSERT INTO [dbo].[OfficeLocation]
-                        ([Name]
-                    ,[Address]
-                ,[City]
-                ,[State]
-                ,[Zip]
-                ,[Country])
-            VALUES
-            ('Indy Office',
-                '9025 North River Road',
-                'Indianapolis',
-                'IN',
-                '46240',
-                'USA'),
-            ('Maryland Office',
-                '2 North Market Street, 4th Floor',
-                'Frederick',
-                'MD',
-                '21701',
-                'USA')");
+            migrationBuilder.CreateIndex(
+                name: "IX_UserListProductVote_ProductId",
+                table: "UserListProductVote",
+                column: "ProductId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -369,10 +439,13 @@ namespace NeverEmptyPantry.Repository.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "OfficeLocation");
+                name: "AuditLog");
 
             migrationBuilder.DropTable(
-                name: "UserProductVote");
+                name: "ListProduct");
+
+            migrationBuilder.DropTable(
+                name: "UserListProductVote");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -381,13 +454,16 @@ namespace NeverEmptyPantry.Repository.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "ListProduct");
-
-            migrationBuilder.DropTable(
                 name: "List");
 
             migrationBuilder.DropTable(
                 name: "Product");
+
+            migrationBuilder.DropTable(
+                name: "OfficeLocation");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }

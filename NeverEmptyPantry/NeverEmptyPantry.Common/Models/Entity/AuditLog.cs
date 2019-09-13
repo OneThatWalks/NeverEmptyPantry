@@ -1,8 +1,8 @@
-﻿using NeverEmptyPantry.Common.Interfaces.Repository;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Models.Identity;
 using Newtonsoft.Json;
 using System;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace NeverEmptyPantry.Common.Models.Entity
 {
@@ -36,13 +36,5 @@ namespace NeverEmptyPantry.Common.Models.Entity
                 User = user
             };
         }
-    }
-
-    public enum AuditAction
-    {
-        CREATE = 0,
-        UPDATE = 1,
-        HARD_DELETE = 2,
-        SOFT_DELETE = 3
     }
 }

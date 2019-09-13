@@ -31,44 +31,7 @@ namespace NeverEmptyPantry.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // ===== Add DbContext
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            // ===== Add Identity
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddSignInManager<ApplicationSignInManager>()
-                .AddDefaultTokenProviders();
-
-            // ===== Add Jwt Auth
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => Remove default claims
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(config =>
-                {
-                    config.RequireHttpsMetadata = false;
-                    config.SaveToken = true;
-                    config.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = Configuration["JwtIssuer"],
-                        ValidAudience = Configuration["JwtIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-                        ClockSkew = TimeSpan.Zero // remove delay of expired token
-                    };
-                });
-
-            // ===== Add Services
-            services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IListRepository, ListRepository>();
-            services.AddScoped<IAccountService, AccountService>();
-
-            // ===== Add MVC
-            services.AddMvc();
+            services.AddNeverEmptyPantry(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,9 +42,13 @@ namespace NeverEmptyPantry.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-            dbContext.Database.EnsureCreated();
+            app.UseAuthentication();
+
+            app.UseHttpsRedirection();
+
+            app.UseMvc();
         }
     }
 }

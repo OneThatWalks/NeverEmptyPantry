@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using NeverEmptyPantry.Common.Interfaces;
+using NeverEmptyPantry.Common.Models.Account;
 
 namespace NeverEmptyPantry.Common.Models
 {
-    public class OperationResult<T>
+    public class OperationResult<T> : IOperationResult<T>
     {
         public IEnumerable<OperationError> Errors { get; set; }
         public bool Succeeded { get; set; }
         public T Data { get; set; }
 
-        public static OperationResult<T> Success => new OperationResult<T> { Succeeded = true };
-        public static OperationResult<T> Failed(params OperationError[] errors) =>
+        public static IOperationResult<T> Success(T data) => new OperationResult<T> { Succeeded = true, Data = data};
+        public static IOperationResult<T> Failed(params OperationError[] errors) =>
              new OperationResult<T>
              {
                  Succeeded = false,

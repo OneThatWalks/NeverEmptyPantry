@@ -1,23 +1,22 @@
 ﻿using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces.Entity;
-using NeverEmptyPantry.Common.Models.Entity;
 
-namespace NeverEmptyPantry.Common.Models.List
+namespace NeverEmptyPantry.Common.Models.Entity
 {
-    public class ListProductMap : BaseEntity, IMergeableEntity<ListProductMap>
+    public class ListProduct : BaseEntity, IMergeableEntity<ListProduct>
     {
-        public Entity.Product Product { get; set; }
-        public Entity.List List { get; set; }
+        public Product Product { get; set; }
+        public List List { get; set; }
         public ListProductState ListProductState { get; set; }
 
-        public static ListProductMap FromProductAndList(Entity.Product product, Entity.List list) => new ListProductMap
+        public static ListProduct FromProductAndList(Product product, List list) => new ListProduct
         {
             Product = product,
             List = list,
             ListProductState = ListProductState.ITEM_ADDED
         };
 
-        public void MergeProperties(ListProductMap updatedEntity)
+        public void MergeProperties(ListProduct updatedEntity)
         {
             base.MergeProperties(updatedEntity);
             Product = updatedEntity.Product;
