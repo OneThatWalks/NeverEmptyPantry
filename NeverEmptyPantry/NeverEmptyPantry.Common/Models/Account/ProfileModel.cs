@@ -1,4 +1,8 @@
-﻿using NeverEmptyPantry.Common.Models.Entity;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 
 namespace NeverEmptyPantry.Common.Models.Account
@@ -19,18 +23,40 @@ namespace NeverEmptyPantry.Common.Models.Account
 
         public string Title { get; set; }
 
-        public static ProfileModel FromUser(ApplicationUser user)
+        public IDictionary<string, string> Claims { get; set; }
+
+        public string[] Roles { get; set; }
+
+        public ProfileModel() { }
+
+        public ProfileModel(ApplicationUser user)
         {
-            return new ProfileModel
+            Email = user.Email;
+            UserName = user.UserName;
+            PhoneNumber = user.PhoneNumber;
+            OfficeLocation = user.OfficeLocation;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            Title = user.Title;
+        }
+
+        public ProfileModel AddClaims(IList<Claim> claims)
+        {
+            Claims = new Dictionary<string, string>();
+
+            foreach (var claim in claims)
             {
-                Email = user.Email,
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                OfficeLocation = user.OfficeLocation,
-                PhoneNumber = user.PhoneNumber,
-                Title = user.Title
-            };
+                Claims.Add(claim.Type, claim.Value);
+            }
+
+            return this;
+        }
+
+        public ProfileModel AddRoles(IList<string> roles)
+        {
+            Roles = roles.ToArray();
+
+            return this;
         }
     }
 }

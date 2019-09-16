@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -13,7 +15,7 @@ namespace NeverEmptyPantry.Repository.Entity
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            
+
         }
 
         public DbSet<Product> Products { get; set; }
@@ -57,17 +59,24 @@ namespace NeverEmptyPantry.Repository.Entity
                 .Property(e => e.AuditAction)
                 .HasConversion(new EnumToStringConverter<AuditAction>());
 
-            var system = new ApplicationUser {
-                UserName = "System",
-                TwoFactorEnabled = false,
-                EmailConfirmed = true
+            builder.Entity<IdentityRole>()
+                .HasData(new IdentityRole("Administrator") {NormalizedName = "Administrator".ToUpper(CultureInfo.CurrentCulture)});
+
+            var indyOffice = new OfficeLocation()
+            {
+                Id = 1,
+                Name = "Indy Office",
+                Active = true,
+                Address = "9025 River Road Suite 150",
+                City = "Indianapolis",
+                Country = "USA",
+                CreatedDateTimeUtc = DateTime.UtcNow,
+                State = "IN",
+                Zip = "46240"
             };
 
-            var passwordHasher = new PasswordHasher<ApplicationUser>();
-            system.PasswordHash = passwordHasher.HashPassword(system, "FGsltw316");
-
-            builder.Entity<ApplicationUser>()
-                .HasData(system);
+            builder.Entity<OfficeLocation>()
+                .HasData(indyOffice);
         }
     }
 
@@ -75,6 +84,30 @@ namespace NeverEmptyPantry.Repository.Entity
     {
         public ApplicationUserClaimsPrincipalFactory(UserManager<ApplicationUser> userManager, IOptions<IdentityOptions> optionsAccessor) : base(userManager, optionsAccessor)
         {
+        }
+    }
+
+    public static class ApplicationDbInitializer
+    {
+        public static void SeedUsers(UserManager<ApplicationUser> userManager)
+        {
+            if (userManager.FindByNameAsync("System").Result == null)
+            {
+                ApplicationUser user = new ApplicationUser
+                {
+                    UserName = "System",
+                    Email = "",
+                    TwoFactorEnabled = false,
+                    EmailConfirmed = true
+                };
+
+                IdentityResult result = userManager.CreateAsync(user, "qxUWa2SDUW[mptmw").Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user, "Administrator").Wait();
+                }
+            }
         }
     }
 }

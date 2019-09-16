@@ -12,6 +12,7 @@ using NeverEmptyPantry.Application.Services;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 using NeverEmptyPantry.Repository.Services;
@@ -95,6 +96,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
+            builder.Services.AddScoped<IRepository<OfficeLocation>, BaseEntityRepository<OfficeLocation>>();
             // TODO: I Repository<Entity>
 
             return builder;
@@ -103,6 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static INeverEmptyPantryBuilder AddApplication(this INeverEmptyPantryBuilder builder)
         {
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             return builder;
         }
