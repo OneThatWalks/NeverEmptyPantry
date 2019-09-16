@@ -1,6 +1,9 @@
 ﻿// ReSharper disable once CheckNamespace
 
 using System;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NeverEmptyPantry.Api.Interfaces;
 using NeverEmptyPantry.Api.Util;
@@ -26,7 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
             var builder = services.AddNeverEmptyPantryCore(configuration);
 
             // Additional generic services can be added here
-            builder.Services.AddMvc();
+            builder.Services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             return builder;
         }
@@ -44,7 +48,35 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.AddJwtDetails();
 
-            builder.AddDbContext();
+            builder.AddDbContext(
+                options =>
+                    options.UseSqlServer(builder.ConnectionStrings.DefaultDbConnection));
+
+            builder.AddIdentity();
+
+            builder.AddJwtAuthentication();
+
+            builder.AddRepository();
+
+            builder.AddApplication();
+
+            return builder;
+        }
+
+        public static INeverEmptyPantryBuilder AddNeverEmptyPantryCore(this IServiceCollection services, IConfiguration configuration, Action<DbContextOptionsBuilder> options)
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            var builder = new NeverEmptyPantryBuilder(services, configuration);
+
+            builder.AddConnectionStrings();
+
+            builder.AddJwtDetails();
+
+            builder.AddDbContext(options);
 
             builder.AddIdentity();
 

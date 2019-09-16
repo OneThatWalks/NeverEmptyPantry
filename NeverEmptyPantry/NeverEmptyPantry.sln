@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeverEmptyPantry.Applicatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeverEmptyPantry.Tests", "NeverEmptyPantry.Tests\NeverEmptyPantry.Tests.csproj", "{CF157527-3397-4ED8-B6E7-03FD1E617AF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeverEmptyPantry.Api.IntegrationTests", "NeverEmptyPantry.Api.IntegrationTests\NeverEmptyPantry.Api.IntegrationTests.csproj", "{402BA064-2F80-484D-9AEF-69C8D1429FF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{CF157527-3397-4ED8-B6E7-03FD1E617AF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF157527-3397-4ED8-B6E7-03FD1E617AF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF157527-3397-4ED8-B6E7-03FD1E617AF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{402BA064-2F80-484D-9AEF-69C8D1429FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{402BA064-2F80-484D-9AEF-69C8D1429FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{402BA064-2F80-484D-9AEF-69C8D1429FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{402BA064-2F80-484D-9AEF-69C8D1429FF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,14 +9,17 @@ using Microsoft.IdentityModel.Tokens;
 using NeverEmptyPantry.Api.Interfaces;
 using NeverEmptyPantry.Api.Util;
 using NeverEmptyPantry.Application.Services;
+using NeverEmptyPantry.Application.Validators;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 using NeverEmptyPantry.Repository.Services;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class NeverEmptyPantryBuilderExtensions
@@ -41,10 +44,9 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder;
         }
 
-        public static INeverEmptyPantryBuilder AddDbContext(this INeverEmptyPantryBuilder builder)
+        public static INeverEmptyPantryBuilder AddDbContext(this INeverEmptyPantryBuilder builder, Action<DbContextOptionsBuilder> options)
         {
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.ConnectionStrings.DefaultDbConnection));
+            builder.Services.AddDbContext<ApplicationDbContext>(options);
 
             return builder;
         }
@@ -106,6 +108,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<IValidator<ProfileModel>, ProfileValidator>();
 
             return builder;
         }
