@@ -61,9 +61,8 @@ namespace NeverEmptyPantry.Api.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("profile")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        //[ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Profile()
         {
             var profile = await _accountService.GetProfileAsync(User.FindFirst(JwtRegisteredClaimNames.UniqueName).Value);

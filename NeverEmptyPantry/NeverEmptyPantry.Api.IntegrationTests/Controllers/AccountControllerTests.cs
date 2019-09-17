@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NeverEmptyPantry.Api.IntegrationTests.Util;
 using NeverEmptyPantry.Common.Interfaces;
@@ -36,6 +38,9 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
             _factory.Dispose();
         }
 
+        #region Authenticate
+        // POST: /api/account/authenticate
+
         [Test]
         public async Task Authenticate_ReturnsUnauthorized_WhenLoginInvalid()
         {
@@ -46,11 +51,18 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 Password = "Test"
             };
 
-            // Act
-            var result = await _client.PostAsync("/api/account/authenticate", new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate"))
+            {
+                request.Content = IntegrationHelpers.CreateHttpContent(model);
 
-            // Assert
-            Assert.That(result.StatusCode == HttpStatusCode.Unauthorized);
+                // Act
+                using (var response = await _client.SendAsync(request))
+                {
+
+                    // Assert
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+                }
+            }
         }
 
         [Test]
@@ -63,17 +75,133 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 Password = "Str0ngP@ssword"
             };
 
-            // Act
-            var result = await _client.PostAsync("/api/account/authenticate", new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate"))
+            {
+                request.Content = IntegrationHelpers.CreateHttpContent(model);
 
-            var resultContent = await result.Content.ReadAsStringAsync();
+                // Act
+                using (var response = await _client.SendAsync(request))
+                {
+                    var content = await
+                        IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<TokenModel>>(response.Content);
 
-            var resultObject = JsonConvert.DeserializeObject<OperationResult<TokenModel>>(resultContent);
-
-            // Assert
-            Assert.That(result.StatusCode == HttpStatusCode.OK);
-            Assert.That(resultObject, Is.Not.Null);
-            Assert.That(resultObject.Data.Token, Is.Not.Null);
+                    // Assert
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(content, Is.Not.Null);
+                    Assert.That(content.Data.Token, Is.Not.Null);
+                }
+            }
         }
+
+        #endregion Authenticate
+
+        #region Register
+        // POST: /api/account/register
+
+        [Test]
+        public async Task Register_ReturnsBadRequest_WhenRegisterModelNotValid()
+        {
+            // Arrange
+            var model = new RegistrationModel
+            {
+                Username = "TestUser3",
+                Email = "BadEmail",
+                LastName = "Doe",
+                FirstName = "Jack",
+                Title = "User",
+                PhoneNumber = "",
+                Password = "Str0ngP@ssword"
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/register"))
+            {
+                request.Content = IntegrationHelpers.CreateHttpContent(model);
+
+                // Act
+                using (var response = await _client.SendAsync(request))
+                {
+
+                    // Assert
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                }
+            }
+        }
+
+        [Test]
+        public async Task Register_ReturnsOk_WhenRegisterModelValid()
+        {
+            // Arrange
+            var model = new RegistrationModel
+            {
+                Username = "TestUser3",
+                Email = "TestUser3@email.com",
+                LastName = "Doe",
+                FirstName = "Jack",
+                Title = "User",
+                PhoneNumber = "",
+                Password = "Str0ngP@ssword",
+                OfficeLocationId = 1
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/register"))
+            {
+                request.Content = IntegrationHelpers.CreateHttpContent(model);
+
+                // Act
+                using (var response = await _client.SendAsync(request))
+                {
+
+                    // Assert
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                }
+            }
+        }
+
+        #endregion Register
+
+        #region Profile
+        // GET: /api/account/profile
+
+        [Test]
+        public async Task Profile_ReturnsUnauthorized_WhenNoAuthOnRequest()
+        {
+            // Arrange
+            using (var request = new HttpRequestMessage(HttpMethod.Get, "/api/account/profile"))
+            {
+                // Act
+                using (var response = await _client.SendAsync(request))
+                {
+                    
+                    // Assert
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+                }
+            }
+        }
+
+        [Test]
+        public async Task Profile_ReturnsOk_WhenAuthorized()
+        {
+            // Arrange
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+
+            using (var request = new HttpRequestMessage(HttpMethod.Get, "/api/account/profile"))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                // Act
+                using (var response = await _client.SendAsync(request))
+                {
+                    var content = await
+                        IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<ProfileModel>>(response.Content);
+
+                    // Assert
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(content, Is.Not.Null);
+                    Assert.That(content.Data.UserName, Is.EqualTo("TestUser1"));
+                }
+            }
+        }
+
+        #endregion Profile
     }
 }
