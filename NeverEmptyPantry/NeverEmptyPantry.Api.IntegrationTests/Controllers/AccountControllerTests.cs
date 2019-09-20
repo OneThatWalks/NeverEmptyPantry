@@ -42,7 +42,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         // POST: /api/account/authenticate
 
         [Test]
-        public async Task Authenticate_ReturnsUnauthorized_WhenLoginInvalid()
+        public async Task POSTAuthenticate_ReturnsUnauthorized_WhenLoginInvalid()
         {
             // Arrange
             var model = new LoginModel
@@ -66,7 +66,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         }
 
         [Test]
-        public async Task Authenticate_ReturnsOk_WhenLoginValid()
+        public async Task POSTAuthenticate_ReturnsOk_WhenLoginValid()
         {
             // Arrange
             var model = new LoginModel
@@ -99,7 +99,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         // POST: /api/account/register
 
         [Test]
-        public async Task Register_ReturnsBadRequest_WhenRegisterModelNotValid()
+        public async Task POSTRegister_ReturnsBadRequest_WhenRegisterModelNotValid()
         {
             // Arrange
             var model = new RegistrationModel
@@ -128,7 +128,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         }
 
         [Test]
-        public async Task Register_ReturnsOk_WhenRegisterModelValid()
+        public async Task POSTRegister_ReturnsOk_WhenRegisterModelValid()
         {
             // Arrange
             var model = new RegistrationModel
@@ -163,7 +163,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         // GET: /api/account/profile
 
         [Test]
-        public async Task Profile_ReturnsUnauthorized_WhenNoAuthOnRequest()
+        public async Task GETProfile_ReturnsUnauthorized_WhenNoAuthOnRequest()
         {
             // Arrange
             using (var request = new HttpRequestMessage(HttpMethod.Get, "/api/account/profile"))
@@ -171,7 +171,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 // Act
                 using (var response = await _client.SendAsync(request))
                 {
-                    
+
                     // Assert
                     Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
                 }
@@ -179,7 +179,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         }
 
         [Test]
-        public async Task Profile_ReturnsOk_WhenAuthorized()
+        public async Task GETProfile_ReturnsOk_WhenAuthorized()
         {
             // Arrange
             var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
@@ -202,6 +202,72 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
             }
         }
 
+        // POST: /api/account/profile
+
+        [Test]
+        public async Task PUTProfile_ReturnsBadRequest_WhenModelInvalid()
+        {
+            // Arrange
+            var model = new ProfileModel
+            {
+                UserName = "TestUser1",
+                Email = "BadEmail",
+                FirstName = "John",
+                LastName = "Doe" 
+            };
+
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+
+            using (var request = new HttpRequestMessage(HttpMethod.Put, "/api/account/profile"))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                request.Content = IntegrationHelpers.CreateHttpContent(model);
+
+                // Act
+                using (var response = await _client.SendAsync(request))
+                {
+
+                    // Assert
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                }
+            }
+        }
+
+        [Test]
+        public async Task PUTProfile_ReturnsBadRequest_WhenModelValid()
+        {
+            // Arrange
+            var model = new ProfileModel
+            {
+                UserName = "TestUser1",
+                Email = "NewEmail@user.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+
+            using (var request = new HttpRequestMessage(HttpMethod.Put, "/api/account/profile"))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                request.Content = IntegrationHelpers.CreateHttpContent(model);
+
+                // Act
+                using (var response = await _client.SendAsync(request))
+                {
+                    var content = await
+                        IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<ProfileModel>>(response.Content);
+
+                    // Assert
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(content.Data.Email, Is.EqualTo(model.Email));
+                }
+            }
+        }
+
         #endregion Profile
+
     }
 }

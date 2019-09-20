@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using NeverEmptyPantry.Common.Models.Entity;
@@ -9,14 +10,16 @@ namespace NeverEmptyPantry.Common.Models.Account
 {
     public class ProfileModel
     {
+        [EmailAddress]
         public string Email { get; set; }
 
         public string UserName { get; set; }
-        
+
+        [Phone]
         public string PhoneNumber { get; set; }
         
         public OfficeLocation OfficeLocation { get; set; }
-        
+
         public string FirstName { get; set; }
         
         public string LastName { get; set; }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace NeverEmptyPantry.Api.Controllers
 {
+    [Authorize]
     [Route("api/account")]
     [ApiController]
     [Produces("application/json")]
@@ -26,6 +27,7 @@ namespace NeverEmptyPantry.Api.Controllers
             _authenticationService = authenticationService;
         }
 
+        [AllowAnonymous]
         [HttpPost("authenticate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -36,6 +38,7 @@ namespace NeverEmptyPantry.Api.Controllers
             return loginResult.Succeeded ? (IActionResult)Ok(loginResult) : Unauthorized();
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,7 +61,6 @@ namespace NeverEmptyPantry.Api.Controllers
         }
 
         //TODO: CLAIM POLICY
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("profile")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -70,8 +72,7 @@ namespace NeverEmptyPantry.Api.Controllers
             return ApiHelper.ActionFromOperationResult(profile);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("profile")]
+        [HttpPut("profile")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
