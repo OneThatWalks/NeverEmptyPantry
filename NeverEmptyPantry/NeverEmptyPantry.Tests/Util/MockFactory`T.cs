@@ -7,6 +7,7 @@ using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Identity;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 
 namespace NeverEmptyPantry.Tests.Util
 {
@@ -107,6 +108,13 @@ namespace NeverEmptyPantry.Tests.Util
             service.Setup(_ => _.Validate(It.IsAny<T>()))
                 .Returns(OperationResult.Success)
                 .Verifiable();
+
+            return service;
+        }
+
+        public static Mock<ILogger<T>> GetMockLogger<T>()
+        {
+            var service = new Mock<ILogger<T>>();
 
             return service;
         }

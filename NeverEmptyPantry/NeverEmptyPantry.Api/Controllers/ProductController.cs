@@ -1,0 +1,55 @@
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using NeverEmptyPantry.Common.Interfaces.Application;
+using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Entity;
+using NeverEmptyPantry.Common.Util;
+
+namespace NeverEmptyPantry.Api.Controllers
+{
+    [Authorize]
+    [Route("api/product")]
+    [ApiController]
+    public class ProductController : ControllerBase
+    {
+        private readonly IProductService _productService;
+
+        public ProductController(IProductService productService)
+        {
+            _productService = productService;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Get()
+        {
+            // Get all products
+            var operationResult = await _productService.ReadAsync(p => true);
+
+            return Ok(operationResult);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Get(int id)
+        {
+            // Get all products
+            var operationResult = await _productService.ReadAsync(p => p.Id == id);
+
+            var newOperationResult = new OperationResult<Product>()
+            {
+                Data = operationResult.Data.FirstOrDefault(),
+                Succeeded = operationResult.Succeeded,
+                Errors = operationResult.Errors
+            };
+
+            return ApiHelper.ActionFromOperationResult(newOperationResult);
+        }
+    }
+}
