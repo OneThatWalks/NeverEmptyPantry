@@ -60,6 +60,21 @@ namespace NeverEmptyPantry.Tests.Application
             Assert.That(result.Data[0], Is.EqualTo(product));
         }
 
+        [Test]
+        public async Task ReadAsync_ReturnsFailed_WhenRepoFails()
+        {
+            // Arrange
+            var product = new Product();
+            _mockProductRepository.Setup(_ => _.ReadAsync(It.IsAny<Func<Product, bool>>())).Throws(new Exception("Error"));
+
+            // Act
+            var result = await _productService.ReadAsync(e => e.Id == 1);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.False);
+            Assert.That(result.Errors, Is.Not.Empty);
+        }
+
         #endregion ReadAsync
 
         #region UpdateAsync

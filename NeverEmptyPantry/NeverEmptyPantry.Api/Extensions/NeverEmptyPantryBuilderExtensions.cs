@@ -99,6 +99,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
             builder.Services.AddScoped<IRepository<OfficeLocation>, BaseEntityRepository<OfficeLocation>>();
+            builder.Services.AddScoped<IRepository<Product>, BaseEntityRepository<Product>>();
             // TODO: I Repository<Entity>
 
             return builder;
@@ -109,6 +110,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IValidator<ProfileModel>, ProfileValidator>();
+            builder.Services.AddScoped<IProductService, ProductService>();
 
             return builder;
         }

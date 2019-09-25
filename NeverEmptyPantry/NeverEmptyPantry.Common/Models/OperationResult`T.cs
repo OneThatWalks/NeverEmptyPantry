@@ -1,7 +1,5 @@
-﻿using System;
+﻿using NeverEmptyPantry.Common.Interfaces;
 using System.Collections.Generic;
-using NeverEmptyPantry.Common.Interfaces;
-using NeverEmptyPantry.Common.Models.Account;
 
 namespace NeverEmptyPantry.Common.Models
 {

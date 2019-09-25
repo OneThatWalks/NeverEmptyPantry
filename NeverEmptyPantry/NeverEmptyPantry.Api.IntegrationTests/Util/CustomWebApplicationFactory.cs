@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Logging;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 
@@ -29,7 +30,27 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
     {
         public static void PopulateTestData(ApplicationDbContext dbContext)
         {
+            // Categories
+            Category testCategory = new Category()
+            {
+                Name = "Test Category",
+                Id = 1
+            };
 
+            dbContext.Categories.Add(testCategory);
+
+            // Products
+            Product testProduct = new Product() {
+                Name = "Test product",
+                Id = 1,
+                Active = true,
+                Category = testCategory,
+            };
+
+            dbContext.Products.Add(testProduct);
+
+            // Save
+            dbContext.SaveChanges();
         }
 
         public static void SeedTestUsers(UserManager<ApplicationUser> userManager)

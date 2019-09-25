@@ -1,17 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
+using NeverEmptyPantry.Api.IntegrationTests.Util;
+using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Account;
+using NUnit.Framework;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Testing;
-using NeverEmptyPantry.Api.IntegrationTests.Util;
-using NeverEmptyPantry.Common.Interfaces;
-using NeverEmptyPantry.Common.Models;
-using NeverEmptyPantry.Common.Models.Account;
-using Newtonsoft.Json;
-using NUnit.Framework;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 {

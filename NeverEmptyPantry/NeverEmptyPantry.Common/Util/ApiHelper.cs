@@ -22,16 +22,17 @@ namespace NeverEmptyPantry.Common.Util
 
         public static IActionResult ActionFromOperationResult<T>(IOperationResult<T> result)
         {
-
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return new OkObjectResult(result);
-            } else if (result.Data == null || IsEnumerable(typeof(T)) && !((IEnumerable)result.Data).Any())
+                return new BadRequestObjectResult(result);
+            }
+
+            if (result.Data == null || IsEnumerable(typeof(T)) && !((IEnumerable)result.Data).Any())
             {
                 return new NotFoundObjectResult(result);
             }
 
-            return new BadRequestObjectResult(result);
+            return new OkObjectResult(result);
         }
 
         private static bool IsEnumerable(Type type)
