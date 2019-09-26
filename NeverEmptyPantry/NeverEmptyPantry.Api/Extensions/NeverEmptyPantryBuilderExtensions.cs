@@ -1,13 +1,8 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NeverEmptyPantry.Api.Interfaces;
-using NeverEmptyPantry.Api.Util;
 using NeverEmptyPantry.Application.Services;
 using NeverEmptyPantry.Application.Validators;
 using NeverEmptyPantry.Common.Interfaces.Application;
@@ -18,6 +13,10 @@ using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 using NeverEmptyPantry.Repository.Services;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection

@@ -1,14 +1,12 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Util;
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
 namespace NeverEmptyPantry.Api.Controllers
 {

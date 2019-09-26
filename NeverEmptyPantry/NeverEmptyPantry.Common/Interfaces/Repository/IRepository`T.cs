@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Interfaces.Entity;
 
@@ -27,7 +28,7 @@ namespace NeverEmptyPantry.Common.Interfaces.Repository
         /// </summary>
         /// <param name="query">The query to filter entities by</param>
         /// <returns>A task result that represents filtered entities</returns>
-        Task<List<T>> ReadAsync(Func<T, bool> query);
+        Task<List<T>> ReadAsync(Expression<Func<T, bool>> query);
 
         /// <summary>
         /// Updates an existing entity

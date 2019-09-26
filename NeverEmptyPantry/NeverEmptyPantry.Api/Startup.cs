@@ -1,24 +1,15 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using NeverEmptyPantry.Application.Services;
-using NeverEmptyPantry.Common.Interfaces;
-using NeverEmptyPantry.Common.Interfaces.Application;
-using NeverEmptyPantry.Common.Interfaces.Repository;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
-using NeverEmptyPantry.Repository.Services;
+using System.Net;
 
 namespace NeverEmptyPantry.Api
 {
@@ -38,7 +29,7 @@ namespace NeverEmptyPantry.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<ApplicationUser> userManager, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -55,11 +46,11 @@ namespace NeverEmptyPantry.Api
                         var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                         if (contextFeature != null)
                         {
-                            //logger.LogError($"Something went wrong: {contextFeature.Error}");
+                            logger.LogError($"Something went wrong: {contextFeature.Error}");
 
                             await context.Response.WriteAsync(new
                             {
-                                StatusCode = context.Response.StatusCode,
+                                context.Response.StatusCode,
                                 Message = "Internal Server Error."
                             }.ToString());
                         }
@@ -70,13 +61,17 @@ namespace NeverEmptyPantry.Api
 
             ApplicationDbInitializer.SeedUsers(userManager);
 
+            app.UseRouting();
+
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseAuthentication();
 
+            app.UseAuthorization();
+
             app.UseHttpsRedirection();
 
-            app.UseMvc();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

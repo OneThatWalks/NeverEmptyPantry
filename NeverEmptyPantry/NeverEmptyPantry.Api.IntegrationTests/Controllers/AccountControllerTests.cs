@@ -46,18 +46,15 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 Password = "Test"
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate"))
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate")
             {
-                request.Content = IntegrationHelpers.CreateHttpContent(model);
+                Content = IntegrationHelpers.CreateHttpContent(model)
+            };
 
-                // Act
-                using (var response = await _client.SendAsync(request))
-                {
-
-                    // Assert
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
-                }
-            }
+            // Act
+            using var response = await _client.SendAsync(request);
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
 
         [Test]
@@ -70,22 +67,20 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 Password = "Str0ngP@ssword"
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate"))
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate")
             {
-                request.Content = IntegrationHelpers.CreateHttpContent(model);
+                Content = IntegrationHelpers.CreateHttpContent(model)
+            };
 
-                // Act
-                using (var response = await _client.SendAsync(request))
-                {
-                    var content = await
-                        IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<TokenModel>>(response.Content);
+            // Act
+            using var response = await _client.SendAsync(request);
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<TokenModel>>(response.Content);
 
-                    // Assert
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(content, Is.Not.Null);
-                    Assert.That(content.Data.Token, Is.Not.Null);
-                }
-            }
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content, Is.Not.Null);
+            Assert.That(content.Data.Token, Is.Not.Null);
         }
 
         #endregion Authenticate
@@ -108,18 +103,15 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 Password = "Str0ngP@ssword"
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/register"))
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/register")
             {
-                request.Content = IntegrationHelpers.CreateHttpContent(model);
+                Content = IntegrationHelpers.CreateHttpContent(model)
+            };
 
-                // Act
-                using (var response = await _client.SendAsync(request))
-                {
-
-                    // Assert
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                }
-            }
+            // Act
+            using var response = await _client.SendAsync(request);
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
@@ -138,18 +130,15 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 OfficeLocationId = 1
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/register"))
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/register")
             {
-                request.Content = IntegrationHelpers.CreateHttpContent(model);
+                Content = IntegrationHelpers.CreateHttpContent(model)
+            };
 
-                // Act
-                using (var response = await _client.SendAsync(request))
-                {
-
-                    // Assert
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                }
-            }
+            // Act
+            using var response = await _client.SendAsync(request);
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
         #endregion Register
@@ -161,16 +150,11 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         public async Task GETProfile_ReturnsUnauthorized_WhenNoAuthOnRequest()
         {
             // Arrange
-            using (var request = new HttpRequestMessage(HttpMethod.Get, "/api/account/profile"))
-            {
-                // Act
-                using (var response = await _client.SendAsync(request))
-                {
-
-                    // Assert
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
-                }
-            }
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/api/account/profile");
+            // Act
+            using var response = await _client.SendAsync(request);
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
 
         [Test]
@@ -179,23 +163,18 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
             // Arrange
             var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
 
-            using (var request = new HttpRequestMessage(HttpMethod.Get, "/api/account/profile"))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/api/account/profile");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                // Act
-                using (var response = await _client.SendAsync(request))
-                {
-                    var c = response.Content.ReadAsStringAsync();
-                    var content = await
-                        IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<ProfileModel>>(response.Content);
+            // Act
+            using var response = await _client.SendAsync(request);
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<ProfileModel>>(response.Content);
 
-                    // Assert
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(content, Is.Not.Null);
-                    Assert.That(content.Data.UserName, Is.EqualTo("TestUser1"));
-                }
-            }
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content, Is.Not.Null);
+            Assert.That(content.Data.UserName, Is.EqualTo("TestUser1"));
         }
 
         // POST: /api/account/profile
@@ -214,20 +193,15 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 
             var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
 
-            using (var request = new HttpRequestMessage(HttpMethod.Put, "/api/account/profile"))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/account/profile");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                request.Content = IntegrationHelpers.CreateHttpContent(model);
+            request.Content = IntegrationHelpers.CreateHttpContent(model);
 
-                // Act
-                using (var response = await _client.SendAsync(request))
-                {
-
-                    // Assert
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                }
-            }
+            // Act
+            using var response = await _client.SendAsync(request);
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
@@ -244,23 +218,19 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 
             var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
 
-            using (var request = new HttpRequestMessage(HttpMethod.Put, "/api/account/profile"))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/account/profile");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                request.Content = IntegrationHelpers.CreateHttpContent(model);
+            request.Content = IntegrationHelpers.CreateHttpContent(model);
 
-                // Act
-                using (var response = await _client.SendAsync(request))
-                {
-                    var content = await
-                        IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<ProfileModel>>(response.Content);
+            // Act
+            using var response = await _client.SendAsync(request);
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<ProfileModel>>(response.Content);
 
-                    // Assert
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(content.Data.Email, Is.EqualTo(model.Email));
-                }
-            }
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content.Data.Email, Is.EqualTo(model.Email));
         }
 
         #endregion Profile

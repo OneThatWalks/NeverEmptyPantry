@@ -1,12 +1,11 @@
-﻿using System.IO;
+﻿using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Account;
+using Newtonsoft.Json;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using NeverEmptyPantry.Common.Models;
-using NeverEmptyPantry.Common.Models.Account;
-using Newtonsoft.Json;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Util
 {
@@ -19,15 +18,11 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
         /// <param name="stream">The stream</param>
         public static void SerializeJsonIntoStream(object value, Stream stream)
         {
-            using (var sw = new StreamWriter(stream, new UTF8Encoding(false), 1024, true))
-            {
-                using (var jtw = new JsonTextWriter(sw) { Formatting = Formatting.None })
-                {
-                    var js = new JsonSerializer();
-                    js.Serialize(jtw, value);
-                    jtw.Flush();
-                }
-            }
+            using var sw = new StreamWriter(stream, new UTF8Encoding(false), 1024, true);
+            using var jtw = new JsonTextWriter(sw) { Formatting = Formatting.None };
+            var js = new JsonSerializer();
+            js.Serialize(jtw, value);
+            jtw.Flush();
         }
 
         /// <summary>
@@ -76,23 +71,17 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
         /// <returns>A task result that represents the token</returns>
         public static async Task<string> GetAuthorizationTokenAsync(HttpClient client)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate"))
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate")
             {
-                request.Content = CreateHttpContent(new LoginModel()
-                {
-                    Username = "TestUser1",
-                    Password = "Str0ngP@ssword"
-                });
+                Content = CreateHttpContent(new LoginModel() {Username = "TestUser1", Password = "Str0ngP@ssword"})
+            };
 
-                using (var response = await client.SendAsync(request))
-                {
-                    response.EnsureSuccessStatusCode();
+            using var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
 
-                    var token = await response.Content.ReadAsAsync<OperationResult<TokenModel>>();
+            var token = await response.Content.ReadAsAsync<OperationResult<TokenModel>>();
 
-                    return token.Data.Token;
-                }
-            }
+            return token.Data.Token;
         }
     }
 }

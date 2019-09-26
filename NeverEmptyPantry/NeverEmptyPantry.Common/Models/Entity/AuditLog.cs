@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Models.Identity;
-using Newtonsoft.Json;
 using System;
+using Newtonsoft.Json;
 
 namespace NeverEmptyPantry.Common.Models.Entity
 {

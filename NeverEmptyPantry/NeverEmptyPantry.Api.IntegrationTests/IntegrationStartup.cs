@@ -29,7 +29,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests
             services.AddNeverEmptyPantryIntegrationTesting(Configuration);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, ILogger<IntegrationStartup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, ILogger<IntegrationStartup> logger)
         {
 
             app.UseExceptionHandler(appError =>
@@ -56,14 +56,20 @@ namespace NeverEmptyPantry.Api.IntegrationTests
             dbContext.Database.EnsureCreated();
 
             ApplicationDbInitializer.SeedUsers(userManager);
-            SeedData.SeedTestUsers(userManager);
+            SeedData.SeedTestUsersAsync(userManager).Wait();
             SeedData.PopulateTestData(dbContext);
+
+            app.UseRouting();
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseAuthentication();
 
-            app.UseMvc();
+            app.UseAuthorization();
+
+            app.UseHttpsRedirection();
+
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

@@ -29,9 +29,9 @@ namespace Microsoft.Extensions.DependencyInjection
             });
 
             // Additional generic services can be added here
-            builder.Services.AddMvc()
+            builder.Services.AddControllers()
                 .AddApplicationPart(Assembly.Load(new AssemblyName("NeverEmptyPantry.Api")))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             builder.Services.AddHttpContextAccessor();
 

@@ -7,6 +7,7 @@ using NeverEmptyPantry.Common.Models.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using NeverEmptyPantry.Application.Validators;
 
@@ -63,7 +64,7 @@ namespace NeverEmptyPantry.Application.Services
             return OperationResult<Product>.Success(repositoryResult);
         }
 
-        public async Task<IOperationResult<IList<Product>>> ReadAsync(Func<Product, bool> entityQuery)
+        public async Task<IOperationResult<IList<Product>>> ReadAsync(Expression<Func<Product, bool>> entityQuery)
         {
             if (entityQuery == null)
             {

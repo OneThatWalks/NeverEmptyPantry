@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using NeverEmptyPantry.Common.Interfaces;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
-using NeverEmptyPantry.Common.Interfaces;
-using NeverEmptyPantry.Common.Models;
+using System.Linq;
 
 namespace NeverEmptyPantry.Common.Util
 {
@@ -27,7 +26,7 @@ namespace NeverEmptyPantry.Common.Util
                 return new BadRequestObjectResult(result);
             }
 
-            if (result.Data == null || IsEnumerable(typeof(T)) && !((IEnumerable)result.Data).Any())
+            if (result.Data == null || IsEnumerable(typeof(T)) && !((IEnumerable<object>) result.Data).Any())
             {
                 return new NotFoundObjectResult(result);
             }

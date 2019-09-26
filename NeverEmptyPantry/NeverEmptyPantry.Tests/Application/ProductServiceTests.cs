@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -139,7 +140,7 @@ namespace NeverEmptyPantry.Tests.Application
         {
             // Arrange
             var product = new Product();
-            _mockProductRepository.Setup(_ => _.ReadAsync(It.IsAny<Func<Product, bool>>())).ReturnsAsync(new List<Product>() { product });
+            _mockProductRepository.Setup(_ => _.ReadAsync(It.IsAny<Expression<Func<Product, bool>>>())).ReturnsAsync(new List<Product>() { product });
 
             // Act
             var result = await _productService.ReadAsync(e => e.Id == 1);
@@ -154,7 +155,7 @@ namespace NeverEmptyPantry.Tests.Application
         {
             // Arrange
             var product = new Product();
-            _mockProductRepository.Setup(_ => _.ReadAsync(It.IsAny<Func<Product, bool>>())).Throws(new Exception("Error"));
+            _mockProductRepository.Setup(_ => _.ReadAsync(It.IsAny<Expression<Func<Product, bool>>>())).Throws(new Exception("Error"));
 
             // Act
             var result = await _productService.ReadAsync(e => e.Id == 1);

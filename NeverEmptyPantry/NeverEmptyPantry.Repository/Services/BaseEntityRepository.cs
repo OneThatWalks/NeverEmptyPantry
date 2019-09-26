@@ -6,6 +6,7 @@ using NeverEmptyPantry.Repository.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using NeverEmptyPantry.Common.Enum;
 
@@ -52,9 +53,9 @@ namespace NeverEmptyPantry.Repository.Services
             return _context.Set<T>().SingleOrDefaultAsync(p => p.Id == entityId);
         }
 
-        public Task<List<T>> ReadAsync(Func<T, bool> query)
+        public Task<List<T>> ReadAsync(Expression<Func<T, bool>> query)
         {
-            return _context.Set<T>().Where(e => query(e)).ToListAsync();
+            return _context.Set<T>().Where(query).ToListAsync();
         }
 
         public async Task<T> UpdateAsync(T entity, string userId)

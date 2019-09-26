@@ -29,8 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
             var builder = services.AddNeverEmptyPantryCore(configuration);
 
             // Additional generic services can be added here
-            builder.Services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            builder.Services.AddControllers()
+                .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             builder.Services.AddHttpContextAccessor();
 
