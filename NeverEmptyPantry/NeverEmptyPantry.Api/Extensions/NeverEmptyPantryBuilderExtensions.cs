@@ -100,7 +100,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.AddScoped<IRepository<OfficeLocation>, BaseEntityRepository<OfficeLocation>>();
             builder.Services.AddScoped<IRepository<Product>, BaseEntityRepository<Product>>();
-            // TODO: I Repository<Entity>
 
             return builder;
         }
@@ -111,6 +110,16 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IValidator<ProfileModel>, ProfileValidator>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IValidatorFactory<Product>, BaseEntityValidatorFactory<Product>>();
+
+            return builder;
+        }
+
+        public static INeverEmptyPantryBuilder AddValidators(this INeverEmptyPantryBuilder builder)
+        {
+            builder.Services.AddScoped<IValidator<Product>, CreateProductValidator>();
+            builder.Services.AddScoped<IValidator<Product>, RemoveProductValidator>();
+            builder.Services.AddScoped<IValidator<Product>, UpdateProductValidator>();
 
             return builder;
         }

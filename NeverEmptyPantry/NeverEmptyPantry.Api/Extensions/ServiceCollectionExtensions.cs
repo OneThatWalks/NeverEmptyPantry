@@ -32,6 +32,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            builder.Services.AddHttpContextAccessor();
+
             return builder;
         }
 
@@ -60,6 +62,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.AddApplication();
 
+            builder.AddValidators();
+
             return builder;
         }
 
@@ -85,6 +89,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddRepository();
 
             builder.AddApplication();
+
+            builder.AddValidators();
 
             return builder;
         }

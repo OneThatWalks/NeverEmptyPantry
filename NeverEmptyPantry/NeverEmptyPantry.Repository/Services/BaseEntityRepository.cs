@@ -92,7 +92,7 @@ namespace NeverEmptyPantry.Repository.Services
             return entityEntry.Entity;
         }
 
-        public async Task<T> DeleteAsync(T entity, string userId)
+        public async Task<T> RemoveAsync(T entity, string userId)
         {
             var contextEntity = await _context.Set<T>().SingleOrDefaultAsync(p => p.Id == entity.Id);
 

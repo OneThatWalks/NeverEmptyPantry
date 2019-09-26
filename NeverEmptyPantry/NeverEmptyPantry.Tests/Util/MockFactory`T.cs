@@ -35,7 +35,7 @@ namespace NeverEmptyPantry.Tests.Util
                 .Verifiable();
 
             service
-                .Setup(_ => _.DeleteAsync(It.IsAny<T>(), It.IsAny<string>()))
+                .Setup(_ => _.RemoveAsync(It.IsAny<T>(), It.IsAny<string>()))
                 .ReturnsAsync((T entity, string user) => entity)
                 .Verifiable();
 
@@ -115,6 +115,24 @@ namespace NeverEmptyPantry.Tests.Util
         public static Mock<ILogger<T>> GetMockLogger<T>()
         {
             var service = new Mock<ILogger<T>>();
+
+            return service;
+        }
+
+        public static Mock<IAuthenticationService> GetMockAuthenticationService()
+        {
+            var service = new Mock<IAuthenticationService>();
+
+            service.Setup(_ => _.GetUserId()).Returns("testuser");
+
+            return service;
+        }
+
+        public static Mock<IValidatorFactory<T>> GetMockValidatorFactory<T>(Mock<IValidator<T>> mockValidator)
+        {
+            var service = new Mock<IValidatorFactory<T>>();
+
+            service.Setup(_ => _.GetValidator<IValidator<T>>()).Returns(mockValidator.Object);
 
             return service;
         }

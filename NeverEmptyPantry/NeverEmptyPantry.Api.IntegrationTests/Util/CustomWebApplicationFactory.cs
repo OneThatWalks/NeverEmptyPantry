@@ -19,7 +19,6 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
                 {
                     logging.ClearProviders();
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
                     logging.AddDebug();
                 })
                 .UseStartup<TStartup>();

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using NeverEmptyPantry.Api.Interfaces;
+using System;
+using System.Reflection;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -33,6 +32,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddMvc()
                 .AddApplicationPart(Assembly.Load(new AssemblyName("NeverEmptyPantry.Api")))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            builder.Services.AddHttpContextAccessor();
 
             return builder;
         }

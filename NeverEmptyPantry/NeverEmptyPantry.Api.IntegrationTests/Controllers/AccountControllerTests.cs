@@ -186,6 +186,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 // Act
                 using (var response = await _client.SendAsync(request))
                 {
+                    var c = response.Content.ReadAsStringAsync();
                     var content = await
                         IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<ProfileModel>>(response.Content);
 

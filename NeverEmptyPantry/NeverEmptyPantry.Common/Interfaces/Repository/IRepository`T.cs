@@ -43,6 +43,6 @@ namespace NeverEmptyPantry.Common.Interfaces.Repository
         /// <param name="entity">The entity to delete</param>
         /// <param name="userId">The user id associated with the change</param>
         /// <returns>A task result that represents the deleted entity</returns>
-        Task<T> DeleteAsync(T entity, string userId);
+        Task<T> RemoveAsync(T entity, string userId);
     }
 }

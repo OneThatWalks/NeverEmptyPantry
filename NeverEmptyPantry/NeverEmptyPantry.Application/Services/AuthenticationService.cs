@@ -13,23 +13,26 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace NeverEmptyPantry.Application.Services
 {
-    [ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage] // TODO: Test
     public class AuthenticationService : IAuthenticationService
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtDetails _jwtDetails;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthenticationService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, JwtDetails jwtDetails, RoleManager<IdentityRole> roleManager)
+        public AuthenticationService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, JwtDetails jwtDetails, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _jwtDetails = jwtDetails;
             _roleManager = roleManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IOperationResult<TokenModel>> AuthenticateAsync(LoginModel model)
@@ -49,6 +52,11 @@ namespace NeverEmptyPantry.Application.Services
             var appUser = await _userManager.FindByNameAsync(model.Username);
 
             return OperationResult<TokenModel>.Success(new TokenModel(await GetToken(appUser)));
+        }
+
+        public string GetUserId()
+        {
+            return _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
         }
 
         private async Task<string> GetToken(ApplicationUser user)
