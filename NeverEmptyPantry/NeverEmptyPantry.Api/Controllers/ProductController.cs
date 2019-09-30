@@ -51,5 +51,27 @@ namespace NeverEmptyPantry.Api.Controllers
 
             return ApiHelper.ActionFromOperationResult(newOperationResult);
         }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Put(Product product)
+        {
+            if (!ModelState.IsValid)
+            {
+                var error = new OperationError
+                {
+                    Name = "Invalid",
+                    Description = "Model is not valid"
+                };
+
+                return BadRequest(OperationResult.Failed(error));
+            }
+
+            var productUpdateResult = await _productService.UpdateAsync(product);
+
+            return ApiHelper.ActionFromOperationResult(productUpdateResult);
+        }
     }
 }

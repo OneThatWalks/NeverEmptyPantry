@@ -64,13 +64,27 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
             dbContext.SaveChanges();
         }
 
-        public static async Task SeedTestUsersAsync(UserManager<ApplicationUser> userManager)
+        public static void SeedTestUsersAsync(UserManager<ApplicationUser> userManager)
         {
-            var user1 = await userManager.FindByNameAsync("TestUser1");
+            ApplicationUser user1;
+            IdentityResult result1;
+            var user1Task = userManager.FindByNameAsync("TestUser1");
+            var user2Task = userManager.FindByNameAsync("TestUser2");
 
-            IdentityResult result1 = null;
-            if (user1 == null)
+            user1Task.ContinueWith(t =>
             {
+                if (t.Exception?.InnerException != null)
+                {
+                    throw t.Exception.InnerException;
+                }
+
+                user1 = t.Result;
+
+                if (user1 != null)
+                {
+                    return;
+                }
+
                 user1 = new ApplicationUser
                 {
                     UserName = "TestUser1",
@@ -82,13 +96,35 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
                 };
 
                 result1 = userManager.CreateAsync(user1, "Str0ngP@ssword").Result;
-            }
 
-            var user2 = await userManager.FindByNameAsync("TestUser2");
+                if (result1.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user1, "Administrator").Wait();
+                }
+                else if (!result1.Succeeded)
+                {
+                    var resultErrors1 = result1.Errors.Select(err => err.Description);
+                    throw new Exception($"Seed Users failed. {string.Join(',', resultErrors1)}");
+                }
+            });
 
+            ApplicationUser user2;
             IdentityResult result2 = null;
-            if (user2 == null)
+
+            user2Task.ContinueWith(t =>
             {
+                if (t.Exception?.InnerException != null)
+                {
+                    throw t.Exception.InnerException;
+                }
+
+                user2 = t.Result;
+
+                if (user2 != null)
+                {
+                    return;
+                }
+
                 user2 = new ApplicationUser
                 {
                     UserName = "TestUser2",
@@ -100,18 +136,15 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
                 };
 
                 result2 = userManager.CreateAsync(user2, "Str0ngP@ssword").Result;
-            }
 
-            if (result1.Succeeded)
-            {
-                userManager.AddToRoleAsync(user1, "Administrator").Wait();
-            }
-            else if (!result1.Succeeded || !result2.Succeeded)
-            {
-                var resultErrors1 = result1.Errors.Select(err => err.Description);
-                var resultErrors2 = result2.Errors.Select(err => err.Description);
-                throw new Exception($"Seed Users failed. {string.Join(',', resultErrors1)} : {string.Join(',', resultErrors2)}");
-            }
+                if (!result2.Succeeded)
+                {
+                    var resultErrors2 = result2.Errors.Select(err => err.Description);
+                    throw new Exception($"Seed Users failed. {string.Join(',', resultErrors2)}");
+                }
+            });
+
+            
         }
     }
 }

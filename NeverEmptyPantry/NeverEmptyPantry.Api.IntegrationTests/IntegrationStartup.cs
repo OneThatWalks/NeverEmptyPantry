@@ -56,7 +56,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests
             dbContext.Database.EnsureCreated();
 
             ApplicationDbInitializer.SeedUsers(userManager);
-            SeedData.SeedTestUsersAsync(userManager).Wait();
+            SeedData.SeedTestUsersAsync(userManager);
             SeedData.PopulateTestData(dbContext);
 
             app.UseRouting();

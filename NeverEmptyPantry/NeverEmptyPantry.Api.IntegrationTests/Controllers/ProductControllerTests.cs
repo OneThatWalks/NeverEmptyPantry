@@ -44,8 +44,10 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         {
             // Arrange
             using var request = new HttpRequestMessage(HttpMethod.Get, "/api/product");
+
             // Act
             using var response = await _client.SendAsync(request);
+
             // Assert
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
@@ -77,8 +79,10 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         {
             // Arrange
             using var request = new HttpRequestMessage(HttpMethod.Get, "/api/product/1");
+
             // Act
             using var response = await _client.SendAsync(request);
+
             // Assert
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
@@ -114,10 +118,31 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 
             // Act
             using var response = await _client.SendAsync(request);
+
             // Assert
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
         #endregion Get
+
+        #region Put
+
+        // PUT: /api/products/1
+
+        [Test]
+        public async Task PUTProductById_ReturnsUnauth_WhenNotAuthorized()
+        {
+            // Arrange
+            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/product/1");
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+
+        #endregion Put
     }
 }
