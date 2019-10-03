@@ -43,7 +43,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
 
                 dbContext.Categories.Add(testCategory);
             }
-            
+
             // Products
             Product testProduct =
                 dbContext.Products.FirstOrDefault(p => p.Name.Equals("Test Product", StringComparison.CurrentCulture));
@@ -64,87 +64,62 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
             dbContext.SaveChanges();
         }
 
-        public static void SeedTestUsersAsync(UserManager<ApplicationUser> userManager)
+        public static void SeedTestUsers(UserManager<ApplicationUser> userManager)
         {
-            ApplicationUser user1;
             IdentityResult result1;
-            var user1Task = userManager.FindByNameAsync("TestUser1");
-            var user2Task = userManager.FindByNameAsync("TestUser2");
+            var user1 = userManager.FindByNameAsync("TestUser1").Result;
+            var user2 = userManager.FindByNameAsync("TestUser2").Result;
 
-            user1Task.ContinueWith(t =>
+            if (user1 != null)
             {
-                if (t.Exception?.InnerException != null)
-                {
-                    throw t.Exception.InnerException;
-                }
+                return;
+            }
 
-                user1 = t.Result;
+            user1 = new ApplicationUser
+            {
+                UserName = "TestUser1",
+                Email = "TestUser1@email.com",
+                FirstName = "John",
+                LastName = "Doe",
+                PhoneNumber = "18005555555",
+                Title = "Tester"
+            };
 
-                if (user1 != null)
-                {
-                    return;
-                }
+            result1 = userManager.CreateAsync(user1, "Str0ngP@ssword").Result;
 
-                user1 = new ApplicationUser
-                {
-                    UserName = "TestUser1",
-                    Email = "TestUser1@email.com",
-                    FirstName = "John",
-                    LastName = "Doe",
-                    PhoneNumber = "18005555555",
-                    Title = "Tester"
-                };
-
-                result1 = userManager.CreateAsync(user1, "Str0ngP@ssword").Result;
-
-                if (result1.Succeeded)
-                {
-                    userManager.AddToRoleAsync(user1, "Administrator").Wait();
-                }
-                else if (!result1.Succeeded)
-                {
-                    var resultErrors1 = result1.Errors.Select(err => err.Description);
-                    throw new Exception($"Seed Users failed. {string.Join(',', resultErrors1)}");
-                }
-            });
-
-            ApplicationUser user2;
+            if (result1.Succeeded)
+            {
+                userManager.AddToRoleAsync(user1, "Administrator").Wait();
+            }
+            else if (!result1.Succeeded)
+            {
+                var resultErrors1 = result1.Errors.Select(err => err.Description);
+                throw new Exception($"Seed Users failed. {string.Join(',', resultErrors1)}");
+            }
             IdentityResult result2 = null;
 
-            user2Task.ContinueWith(t =>
+            if (user2 != null)
             {
-                if (t.Exception?.InnerException != null)
-                {
-                    throw t.Exception.InnerException;
-                }
+                return;
+            }
 
-                user2 = t.Result;
+            user2 = new ApplicationUser
+            {
+                UserName = "TestUser2",
+                Email = "TestUser2@email.com",
+                FirstName = "Jane",
+                LastName = "Doe",
+                PhoneNumber = "18005555555",
+                Title = "Tester"
+            };
 
-                if (user2 != null)
-                {
-                    return;
-                }
+            result2 = userManager.CreateAsync(user2, "Str0ngP@ssword").Result;
 
-                user2 = new ApplicationUser
-                {
-                    UserName = "TestUser2",
-                    Email = "TestUser2@email.com",
-                    FirstName = "Jane",
-                    LastName = "Doe",
-                    PhoneNumber = "18005555555",
-                    Title = "Tester"
-                };
-
-                result2 = userManager.CreateAsync(user2, "Str0ngP@ssword").Result;
-
-                if (!result2.Succeeded)
-                {
-                    var resultErrors2 = result2.Errors.Select(err => err.Description);
-                    throw new Exception($"Seed Users failed. {string.Join(',', resultErrors2)}");
-                }
-            });
-
-            
+            if (!result2.Succeeded)
+            {
+                var resultErrors2 = result2.Errors.Select(err => err.Description);
+                throw new Exception($"Seed Users failed. {string.Join(',', resultErrors2)}");
+            }
         }
     }
 }

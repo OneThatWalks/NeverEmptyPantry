@@ -7,6 +7,10 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using NeverEmptyPantry.Common.Models.Identity;
+using NeverEmptyPantry.Repository.Entity;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 {
@@ -29,6 +33,10 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            dbContext.Database.EnsureDeleted();
+
             _client.Dispose();
             _factory.Dispose();
         }

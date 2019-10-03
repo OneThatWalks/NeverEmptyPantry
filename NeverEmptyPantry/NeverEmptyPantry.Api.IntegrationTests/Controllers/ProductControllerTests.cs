@@ -8,6 +8,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using NeverEmptyPantry.Repository.Entity;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 {
@@ -26,11 +28,19 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
             {
                 AllowAutoRedirect = true
             });
+
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            SeedData.PopulateTestData(dbContext);
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            dbContext.Database.EnsureDeleted();
+
             _client.Dispose();
             _factory.Dispose();
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
@@ -7,17 +8,15 @@ using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Identity;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace NeverEmptyPantry.Application.Services
 {
-    [ExcludeFromCodeCoverage] // TODO: Test
     public class AuthenticationService : IAuthenticationService
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -37,6 +36,7 @@ namespace NeverEmptyPantry.Application.Services
 
         public async Task<IOperationResult<TokenModel>> AuthenticateAsync(LoginModel model)
         {
+            var user = await _userManager.Users.ToListAsync();
             var signInResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
 
             if (!signInResult.Succeeded)
