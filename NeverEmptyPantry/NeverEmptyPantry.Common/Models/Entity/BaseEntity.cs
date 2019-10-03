@@ -3,14 +3,14 @@ using NeverEmptyPantry.Common.Interfaces.Entity;
 
 namespace NeverEmptyPantry.Common.Models.Entity
 {
-    public class BaseEntity : IBaseEntity, IMergeableEntity<BaseEntity>
+    public abstract class BaseEntity : IBaseEntity
     {
         public int Id { get; set; }
         public bool Active { get; set; }
         public DateTime CreatedDateTimeUtc { get; set; }
         public DateTime ModifiedDateTimeUtc { get; set; }
 
-        public void MergeProperties(BaseEntity updatedEntity)
+        public virtual void MergeProperties<T>(T updatedEntity) where T : IBaseEntity
         {
             if (updatedEntity == null)
             {

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using NeverEmptyPantry.Common.Models.Entity;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Util
 {
@@ -82,6 +83,20 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
             var token = await response.Content.ReadAsAsync<OperationResult<TokenModel>>();
 
             return token.Data.Token;
+        }
+
+        public static async Task<Product> GetProductAsync(HttpClient client, int productId)
+        {
+            var token = await GetAuthorizationTokenAsync(client);
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/api/product/1");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var product = await response.Content.ReadAsAsync<OperationResult<Product>>();
+
+            return product.Data;
         }
     }
 }

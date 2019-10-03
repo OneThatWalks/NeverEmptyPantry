@@ -152,6 +152,49 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
 
+        [Test]
+        public async Task PUTProductById_ReturnsBadRequest_WhenInvalidModel()
+        {
+            // Arrange
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+
+            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/product/1")
+            {
+                Content = IntegrationHelpers.CreateHttpContent(new Product()),
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        public async Task PUTProductById_ReturnsOk_WhenProductUpdated()
+        {
+            // Arrange
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+            var product = await IntegrationHelpers.GetProductAsync(_client, 1);
+            product.Brand = "Brand 2";
+
+            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/product/1")
+            {
+                Content = IntegrationHelpers.CreateHttpContent(product),
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<Product>>(response.Content);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content.Data.Brand, Is.EqualTo("Brand 2"));
+        }
 
         #endregion Put
     }

@@ -1,27 +1,38 @@
-﻿using NeverEmptyPantry.Common.Interfaces;
-using NeverEmptyPantry.Common.Interfaces.Entity;
-using NeverEmptyPantry.Common.Interfaces.Repository;
+﻿using NeverEmptyPantry.Common.Interfaces.Entity;
+using System.ComponentModel.DataAnnotations;
 
 namespace NeverEmptyPantry.Common.Models.Entity
 {
-    public class Product : BaseEntity, IMergeableEntity<Product>
+    public class Product : BaseEntity
     {
+        [Required]
         public string Name { get; set; }
+
+        [Required]
         public string Brand { get; set; }
+
         public int PackSize { get; set; }
+
         public string UnitSize { get; set; }
+
         public string Image { get; set; }
+
         public Category Category { get; set; }
 
-        public void MergeProperties(Product updatedEntity)
+        public override void MergeProperties<T>(T updatedEntity)
         {
             base.MergeProperties(updatedEntity);
-            Name = updatedEntity.Name;
-            Brand = updatedEntity.Brand;
-            PackSize = updatedEntity.PackSize;
-            UnitSize = updatedEntity.UnitSize;
-            Image = updatedEntity.Image;
-            Category = updatedEntity.Category;
+
+
+            if (updatedEntity is Product product)
+            {
+                Name = product.Name;
+                Brand = product.Brand;
+                PackSize = product.PackSize;
+                UnitSize = product.UnitSize;
+                Image = product.Image;
+                Category = product.Category;
+            }
         }
     }
 }
