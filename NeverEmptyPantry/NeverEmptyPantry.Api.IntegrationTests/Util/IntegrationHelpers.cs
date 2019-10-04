@@ -1,4 +1,5 @@
-﻿using NeverEmptyPantry.Common.Models;
+﻿using System;
+using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
 using Newtonsoft.Json;
 using System.IO;
@@ -59,7 +60,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
             using (var sr = new StreamReader(await content.ReadAsStreamAsync()))
             {
                 var js = new JsonSerializer();
-                obj = (T) js.Deserialize(sr, typeof(T));
+                obj = (T)js.Deserialize(sr, typeof(T));
             }
 
             return obj;
@@ -74,7 +75,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
         {
             using var request = new HttpRequestMessage(HttpMethod.Post, "/api/account/authenticate")
             {
-                Content = CreateHttpContent(new LoginModel() {Username = "TestUser1", Password = "Str0ngP@ssword"})
+                Content = CreateHttpContent(new LoginModel() { Username = "TestUser1", Password = "Str0ngP@ssword" })
             };
 
             using var response = await client.SendAsync(request);
@@ -85,10 +86,44 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
             return token.Data.Token;
         }
 
+        /// <summary>
+        /// Gets a product from the Api
+        /// </summary>
+        /// <param name="client">The client instance</param>
+        /// <param name="productId">The product id to get</param>
+        /// <returns>A task result that represents the product</returns>
         public static async Task<Product> GetProductAsync(HttpClient client, int productId)
         {
             var token = await GetAuthorizationTokenAsync(client);
             using var request = new HttpRequestMessage(HttpMethod.Get, "/api/product/1");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var product = await response.Content.ReadAsAsync<OperationResult<Product>>();
+
+            return product.Data;
+        }
+
+        /// <summary>
+        /// Creates a random product through the Api
+        /// </summary>
+        /// <param name="client">The http client instance</param>
+        /// <returns>A task result that represents the product created</returns>
+        public static async Task<Product> CreateProductAsync(HttpClient client)
+        {
+            var randomProduct = new Product()
+            {
+                Name = Guid.NewGuid().ToString(),
+                Brand = "Brand"
+            };
+
+            var token = await GetAuthorizationTokenAsync(client);
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/product/")
+            {
+                Content = CreateHttpContent(randomProduct)
+            };
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             using var response = await client.SendAsync(request);

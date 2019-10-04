@@ -263,5 +263,43 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         }
 
         #endregion Post
+
+        #region Delete
+
+        // DELETE: /api/products/1
+
+        [Test]
+        public async Task DELETEProduct_ReturnsUnauth_WhenNotAuthorized()
+        {
+            // Arrange
+            using var request = new HttpRequestMessage(HttpMethod.Delete, "/api/product/1");
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task DELETEProduct_ReturnsOk_WhenRemoved()
+        {
+            // Arrange
+            var newProduct = await IntegrationHelpers.CreateProductAsync(_client);
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+            using var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/product/{newProduct.Id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<Product>>(response.Content);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content.Data.Name, Is.EqualTo(newProduct.Name));
+        }
+
+        #endregion Delete
     }
 }

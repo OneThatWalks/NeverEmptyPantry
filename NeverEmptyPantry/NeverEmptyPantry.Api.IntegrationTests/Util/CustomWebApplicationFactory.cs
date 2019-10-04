@@ -29,8 +29,11 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
 
     public static class SeedData
     {
+        // TODO: Separate
         public static void PopulateTestData(ApplicationDbContext dbContext)
         {
+            // TODO: Make these objects easier to access to assertions
+
             // Categories
             Category testCategory = dbContext.Categories.FirstOrDefault(c => c.Name.Equals("Test Category", StringComparison.CurrentCulture));
             if (testCategory == null)

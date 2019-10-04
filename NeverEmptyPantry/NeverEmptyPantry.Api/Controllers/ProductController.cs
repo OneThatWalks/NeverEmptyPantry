@@ -95,5 +95,16 @@ namespace NeverEmptyPantry.Api.Controllers
 
             return ApiHelper.ActionFromOperationResult(productCreateResult);
         }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var productCreateResult = await _productService.RemoveAsync(id);
+
+            return ApiHelper.ActionFromOperationResult(productCreateResult);
+        }
     }
 }
