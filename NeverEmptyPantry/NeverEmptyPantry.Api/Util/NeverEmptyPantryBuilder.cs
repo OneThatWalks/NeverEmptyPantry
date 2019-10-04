@@ -3,9 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using NeverEmptyPantry.Api.Interfaces;
 using NeverEmptyPantry.Common.Models;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeverEmptyPantry.Api.Util
 {
+    [ExcludeFromCodeCoverage]
     public class NeverEmptyPantryBuilder : INeverEmptyPantryBuilder
     {
         public IServiceCollection Services { get; }

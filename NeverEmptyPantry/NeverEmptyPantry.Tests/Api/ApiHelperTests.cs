@@ -4,9 +4,11 @@ using NeverEmptyPantry.Common.Util;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeverEmptyPantry.Tests.Api
 {
+    [ExcludeFromCodeCoverage]
     [TestFixture]
     public class ApiHelperTests
     {

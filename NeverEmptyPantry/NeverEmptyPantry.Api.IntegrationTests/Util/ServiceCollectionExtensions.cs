@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NeverEmptyPantry.Api.Interfaces;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
         public static INeverEmptyPantryBuilder AddNeverEmptyPantryIntegrationTesting(this IServiceCollection services, IConfiguration configuration)

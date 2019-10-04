@@ -15,12 +15,14 @@ using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 using NeverEmptyPantry.Repository.Services;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
+    [ExcludeFromCodeCoverage]
     public static class NeverEmptyPantryBuilderExtensions
     {
         public static INeverEmptyPantryBuilder AddConnectionStrings(this INeverEmptyPantryBuilder builder)

@@ -7,10 +7,12 @@ using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Identity;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
 namespace NeverEmptyPantry.Tests.Util
 {
+    [ExcludeFromCodeCoverage]
     public static class MockFactory
     {
         public static Mock<IRepository<T>> GetMockRepository<T>() where T : IBaseEntity, new()

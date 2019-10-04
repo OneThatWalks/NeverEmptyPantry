@@ -7,6 +7,7 @@ using NeverEmptyPantry.Repository.Entity;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [TestFixture]
     public class ProductControllerTests
     {

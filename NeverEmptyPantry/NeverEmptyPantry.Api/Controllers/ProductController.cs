@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NeverEmptyPantry.Common.Interfaces.Application;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Api.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [Authorize]
     [Route("api/product")]
     [ApiController]

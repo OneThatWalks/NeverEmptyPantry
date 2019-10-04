@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NeverEmptyPantry.Api.IntegrationTests.Util;
 using NeverEmptyPantry.Common.Models;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [TestFixture]
     public class AccountControllerTests
     {

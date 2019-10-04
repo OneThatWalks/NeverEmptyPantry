@@ -7,10 +7,12 @@ using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Util
 {
+    [ExcludeFromCodeCoverage]
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
         protected override IWebHostBuilder CreateWebHostBuilder()
@@ -26,6 +28,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public static class SeedData
     {
         // TODO: Separate

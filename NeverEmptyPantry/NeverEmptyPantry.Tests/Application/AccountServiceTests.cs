@@ -9,12 +9,14 @@ using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using MockFactory = NeverEmptyPantry.Tests.Util.MockFactory;
 
 namespace NeverEmptyPantry.Tests.Application
 {
+    [ExcludeFromCodeCoverage]
     [TestFixture]
     public class AccountServiceTests
     {
