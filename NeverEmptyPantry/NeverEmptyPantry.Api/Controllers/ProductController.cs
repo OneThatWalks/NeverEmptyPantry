@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Util;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Api.Controllers
 {

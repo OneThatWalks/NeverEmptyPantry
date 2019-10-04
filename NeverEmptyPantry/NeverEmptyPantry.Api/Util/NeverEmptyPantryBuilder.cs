@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NeverEmptyPantry.Api.Interfaces;
 using NeverEmptyPantry.Common.Models;
+using System;
 
 namespace NeverEmptyPantry.Api.Util
 {

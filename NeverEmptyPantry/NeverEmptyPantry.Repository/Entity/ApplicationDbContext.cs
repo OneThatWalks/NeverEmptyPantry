@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -8,6 +6,8 @@ using Microsoft.Extensions.Options;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
+using System;
+using System.Globalization;
 
 namespace NeverEmptyPantry.Repository.Entity
 {
@@ -60,7 +60,7 @@ namespace NeverEmptyPantry.Repository.Entity
                 .HasConversion(new EnumToStringConverter<AuditAction>());
 
             builder.Entity<IdentityRole>()
-                .HasData(new IdentityRole("Administrator") {NormalizedName = "Administrator".ToUpper(CultureInfo.CurrentCulture)});
+                .HasData(new IdentityRole("Administrator") { NormalizedName = "Administrator".ToUpper(CultureInfo.CurrentCulture) });
 
             var indyOffice = new OfficeLocation()
             {

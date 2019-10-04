@@ -1,8 +1,8 @@
-﻿using System;
+﻿using NeverEmptyPantry.Common.Interfaces.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using NeverEmptyPantry.Common.Interfaces.Entity;
 
 namespace NeverEmptyPantry.Common.Interfaces.Application
 {

@@ -1,5 +1,4 @@
-﻿using NeverEmptyPantry.Common.Interfaces.Entity;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace NeverEmptyPantry.Common.Models.Entity
 {

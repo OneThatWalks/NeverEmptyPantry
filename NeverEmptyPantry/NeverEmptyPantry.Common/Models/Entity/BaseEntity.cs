@@ -1,5 +1,5 @@
-﻿using System;
-using NeverEmptyPantry.Common.Interfaces.Entity;
+﻿using NeverEmptyPantry.Common.Interfaces.Entity;
+using System;
 
 namespace NeverEmptyPantry.Common.Models.Entity
 {

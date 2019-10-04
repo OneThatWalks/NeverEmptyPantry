@@ -6,7 +6,6 @@ using NeverEmptyPantry.Repository.Entity;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace NeverEmptyPantry.Repository.Services
 {

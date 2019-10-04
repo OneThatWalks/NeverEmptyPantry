@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NeverEmptyPantry.Api.Util;
 using NeverEmptyPantry.Common.Models;
 
 namespace NeverEmptyPantry.Api.Interfaces

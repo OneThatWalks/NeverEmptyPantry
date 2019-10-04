@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +11,7 @@ using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace NeverEmptyPantry.Api.IntegrationTests
 {

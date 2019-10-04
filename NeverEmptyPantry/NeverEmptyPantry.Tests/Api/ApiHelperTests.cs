@@ -1,9 +1,9 @@
-﻿using NeverEmptyPantry.Common.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Util;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 
 namespace NeverEmptyPantry.Tests.Api
 {

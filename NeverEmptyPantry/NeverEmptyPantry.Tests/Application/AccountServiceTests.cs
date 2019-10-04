@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Moq;
 using NeverEmptyPantry.Application.Services;
 using NeverEmptyPantry.Common.Interfaces.Application;
@@ -10,8 +7,10 @@ using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
-using NeverEmptyPantry.Tests.Util;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using MockFactory = NeverEmptyPantry.Tests.Util.MockFactory;
 
 namespace NeverEmptyPantry.Tests.Application
@@ -224,7 +223,8 @@ namespace NeverEmptyPantry.Tests.Application
         {
             // Arrange
             _mockUserManager.Setup(_ => _.FindByNameAsync(It.IsAny<string>())).ReturnsAsync((ApplicationUser)null);
-            var model = new ProfileModel {
+            var model = new ProfileModel
+            {
                 UserName = "TestUser",
                 Email = "Test@Email.com"
             };

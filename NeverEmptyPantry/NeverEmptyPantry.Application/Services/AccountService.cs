@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Interfaces.Repository;
@@ -9,6 +6,9 @@ using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Application.Services
 {

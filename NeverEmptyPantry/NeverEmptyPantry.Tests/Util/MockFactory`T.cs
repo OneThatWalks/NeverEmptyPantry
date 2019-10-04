@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Interfaces.Entity;
@@ -7,7 +8,6 @@ using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Identity;
 using System.Collections.Generic;
 using System.Security.Claims;
-using Microsoft.Extensions.Logging;
 
 namespace NeverEmptyPantry.Tests.Util
 {

@@ -4,6 +4,6 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
 {
     public interface IProductService : IEntityService<Product>
     {
-        
+
     }
 }

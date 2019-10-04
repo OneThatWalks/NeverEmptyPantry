@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using NeverEmptyPantry.Repository.Entity;
+using System;
+using System.Linq;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Util
 {

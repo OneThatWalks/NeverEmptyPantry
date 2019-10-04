@@ -1,10 +1,9 @@
-﻿using System.Collections;
+﻿using NeverEmptyPantry.Common.Models.Entity;
+using NeverEmptyPantry.Common.Models.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
-using NeverEmptyPantry.Common.Models.Entity;
-using NeverEmptyPantry.Common.Models.Identity;
 
 namespace NeverEmptyPantry.Common.Models.Account
 {
@@ -17,11 +16,11 @@ namespace NeverEmptyPantry.Common.Models.Account
 
         [Phone]
         public string PhoneNumber { get; set; }
-        
+
         public OfficeLocation OfficeLocation { get; set; }
 
         public string FirstName { get; set; }
-        
+
         public string LastName { get; set; }
 
         public string Title { get; set; }

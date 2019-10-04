@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using NeverEmptyPantry.Common.Models;
+﻿using NeverEmptyPantry.Common.Models;
+using System.Collections.Generic;
 
 namespace NeverEmptyPantry.Common.Interfaces
 {

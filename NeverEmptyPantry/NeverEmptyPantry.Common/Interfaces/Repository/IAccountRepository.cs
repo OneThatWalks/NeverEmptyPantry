@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using NeverEmptyPantry.Common.Models.Entity;
+﻿using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Common.Interfaces.Repository
 {

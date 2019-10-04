@@ -1,12 +1,11 @@
 ﻿// ReSharper disable once CheckNamespace
 
-using System;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NeverEmptyPantry.Api.Interfaces;
 using NeverEmptyPantry.Api.Util;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection

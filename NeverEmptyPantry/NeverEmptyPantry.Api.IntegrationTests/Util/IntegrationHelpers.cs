@@ -1,13 +1,13 @@
-﻿using System;
-using NeverEmptyPantry.Common.Models;
+﻿using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
+using NeverEmptyPantry.Common.Models.Entity;
 using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using NeverEmptyPantry.Common.Models.Entity;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Util
 {

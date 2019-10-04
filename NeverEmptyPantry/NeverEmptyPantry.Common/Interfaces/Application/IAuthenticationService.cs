@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using NeverEmptyPantry.Common.Models.Account;
+﻿using NeverEmptyPantry.Common.Models.Account;
+using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Common.Interfaces.Application
 {

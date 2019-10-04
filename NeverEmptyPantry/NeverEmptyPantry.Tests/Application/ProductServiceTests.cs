@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NeverEmptyPantry.Application.Services;
 using NeverEmptyPantry.Common.Interfaces.Application;
@@ -11,6 +6,11 @@ using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Entity;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using MockFactory = NeverEmptyPantry.Tests.Util.MockFactory;
 
 namespace NeverEmptyPantry.Tests.Application
@@ -79,7 +79,8 @@ namespace NeverEmptyPantry.Tests.Application
         public async Task CreateAsync_ReturnsSuccess_WhenSuccessful()
         {
             // Arrange
-            var model = new Product() {
+            var model = new Product()
+            {
                 Name = "Test Product",
                 Active = true,
                 Brand = "Test",

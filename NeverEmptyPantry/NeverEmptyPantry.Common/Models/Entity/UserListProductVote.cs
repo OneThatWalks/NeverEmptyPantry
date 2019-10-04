@@ -1,5 +1,4 @@
-﻿using System;
-using NeverEmptyPantry.Common.Enum;
+﻿using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Models.Identity;
 
 namespace NeverEmptyPantry.Common.Models.Entity

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using NeverEmptyPantry.Application.Validators;
 using NeverEmptyPantry.Common.Interfaces;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Interfaces.Repository;
@@ -9,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using NeverEmptyPantry.Application.Validators;
 
 namespace NeverEmptyPantry.Application.Services
 {

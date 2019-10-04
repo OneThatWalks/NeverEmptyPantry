@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Interfaces.Repository;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Repository.Entity;
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using NeverEmptyPantry.Common.Enum;
 
 namespace NeverEmptyPantry.Repository.Services
 {

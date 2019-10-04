@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace NeverEmptyPantry.Common.Models.Account
 {
@@ -20,7 +19,7 @@ namespace NeverEmptyPantry.Common.Models.Account
 
         [Required]
         public string LastName { get; set; }
-        
+
         public string Title { get; set; }
     }
 }

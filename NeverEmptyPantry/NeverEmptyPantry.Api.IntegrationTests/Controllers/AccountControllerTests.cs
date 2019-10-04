@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using NeverEmptyPantry.Api.IntegrationTests.Util;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
+using NeverEmptyPantry.Repository.Entity;
 using NUnit.Framework;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using NeverEmptyPantry.Common.Models.Identity;
-using NeverEmptyPantry.Repository.Entity;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 {
@@ -196,7 +194,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 UserName = "TestUser1",
                 Email = "BadEmail",
                 FirstName = "John",
-                LastName = "Doe" 
+                LastName = "Doe"
             };
 
             var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);

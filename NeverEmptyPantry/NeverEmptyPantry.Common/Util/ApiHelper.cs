@@ -26,7 +26,7 @@ namespace NeverEmptyPantry.Common.Util
                 return new BadRequestObjectResult(result);
             }
 
-            if (result.Data == null || IsEnumerable(typeof(T)) && !((IEnumerable<object>) result.Data).Any())
+            if (result.Data == null || IsEnumerable(typeof(T)) && !((IEnumerable<object>)result.Data).Any())
             {
                 return new NotFoundObjectResult(result);
             }

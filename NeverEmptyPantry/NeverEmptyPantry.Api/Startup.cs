@@ -34,7 +34,8 @@ namespace NeverEmptyPantry.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            } else
+            }
+            else
             {
                 app.UseExceptionHandler(appError =>
                 {
