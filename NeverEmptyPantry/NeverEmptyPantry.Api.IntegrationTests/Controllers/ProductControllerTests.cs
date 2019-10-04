@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using System;
+using Microsoft.AspNetCore.Mvc.Testing;
 using NeverEmptyPantry.Api.IntegrationTests.Util;
 using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Entity;
@@ -197,5 +198,70 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         }
 
         #endregion Put
+
+        #region Post
+
+        // POST: /api/products/
+
+        [Test]
+        public async Task POSTProduct_ReturnsUnauth_WhenNotAuthorized()
+        {
+            // Arrange
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/product/");
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task POSTProduct_ReturnsBadRequest_WhenNotValid()
+        {
+            // Arrange
+            var product = new Product();
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/product/")
+            {
+                Content = IntegrationHelpers.CreateHttpContent(product)
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        public async Task POSTProduct_ReturnsOk_WhenCreated()
+        {
+            // Arrange
+            var product = new Product()
+            {
+                Name = "Testing Product",
+                Brand = "Test",
+                CreatedDateTimeUtc = DateTime.UtcNow
+            };
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/product/")
+            {
+                Content = IntegrationHelpers.CreateHttpContent(product)
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<Product>>(response.Content);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content.Data.Name, Is.EqualTo("Testing Product"));
+        }
+
+        #endregion Post
     }
 }
