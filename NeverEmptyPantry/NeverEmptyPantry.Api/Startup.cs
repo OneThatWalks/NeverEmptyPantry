@@ -62,8 +62,6 @@ namespace NeverEmptyPantry.Api
                 app.UseHsts();
             }
 
-            ApplicationDbInitializer.SeedUsers(userManager);
-
             app.UseRouting();
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

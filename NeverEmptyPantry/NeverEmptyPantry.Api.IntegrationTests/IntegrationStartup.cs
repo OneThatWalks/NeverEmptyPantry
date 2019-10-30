@@ -57,9 +57,6 @@ namespace NeverEmptyPantry.Api.IntegrationTests
 
             dbContext.Database.EnsureCreated();
 
-            ApplicationDbInitializer.SeedUsers(userManager);
-            SeedData.SeedTestUsers(userManager);
-
             app.UseRouting();
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

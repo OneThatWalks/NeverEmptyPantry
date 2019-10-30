@@ -8,6 +8,9 @@ using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using System;
 using System.Globalization;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using NeverEmptyPantry.Common.Permissions;
 
 namespace NeverEmptyPantry.Repository.Entity
 {
@@ -59,9 +62,6 @@ namespace NeverEmptyPantry.Repository.Entity
                 .Property(e => e.AuditAction)
                 .HasConversion(new EnumToStringConverter<AuditAction>());
 
-            builder.Entity<IdentityRole>()
-                .HasData(new IdentityRole("Administrator") { NormalizedName = "Administrator".ToUpper(CultureInfo.CurrentCulture) });
-
             var indyOffice = new OfficeLocation()
             {
                 Id = 1,
@@ -89,11 +89,11 @@ namespace NeverEmptyPantry.Repository.Entity
 
     public static class ApplicationDbInitializer
     {
-        public static void SeedUsers(UserManager<ApplicationUser> userManager)
+        public static async Task SeedUsersAsync(UserManager<ApplicationUser> userManager)
         {
-            if (userManager.FindByNameAsync("System").Result == null)
+            if (await userManager.FindByNameAsync("System") == null)
             {
-                ApplicationUser user = new ApplicationUser
+                var user = new ApplicationUser
                 {
                     UserName = "System",
                     Email = "",
@@ -101,12 +101,30 @@ namespace NeverEmptyPantry.Repository.Entity
                     EmailConfirmed = true
                 };
 
-                IdentityResult result = userManager.CreateAsync(user, "qxUWa2SDUW[mptmw").Result;
+                var result = await userManager.CreateAsync(user, "qxUWa2SDUW[mptmw");
 
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(user, "Administrator").Wait();
+                    await userManager.AddToRoleAsync(user, DefaultRoles.Administrator);
                 }
+            }
+        }
+
+        public static async Task SeedRolesClaimsAsync(RoleManager<IdentityRole> roleManager)
+        {
+            var adminRole = await roleManager.FindByNameAsync(DefaultRoles.Administrator);
+            var userRole = await roleManager.FindByNameAsync(DefaultRoles.User);
+
+            if (adminRole == null)
+            {
+                var role = new IdentityRole(DefaultRoles.Administrator);
+                await roleManager.CreateAsync(role);
+            }
+
+            if (userRole == null)
+            {
+                var role = new IdentityRole(DefaultRoles.User);
+                await roleManager.CreateAsync(role);
             }
         }
     }

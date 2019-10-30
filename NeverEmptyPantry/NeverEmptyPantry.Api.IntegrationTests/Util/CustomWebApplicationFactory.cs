@@ -9,6 +9,10 @@ using NeverEmptyPantry.Repository.Entity;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using NeverEmptyPantry.Common.Permissions;
 
 namespace NeverEmptyPantry.Api.IntegrationTests.Util
 {
@@ -25,6 +29,24 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
                     logging.AddDebug();
                 })
                 .UseStartup<TStartup>();
+        }
+
+        protected override TestServer CreateServer(IWebHostBuilder builder)
+        {
+            var server = base.CreateServer(builder);
+
+            using var scope = server.Host.Services.CreateScope();
+
+            var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+            var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+
+            ApplicationDbInitializer.SeedRolesClaimsAsync(roleManager).GetAwaiter().GetResult();
+
+            ApplicationDbInitializer.SeedUsersAsync(userManager).GetAwaiter().GetResult();
+
+            SeedData.SeedTestUsersAsync(userManager).GetAwaiter().GetResult();
+
+            return server;
         }
     }
 
@@ -69,11 +91,11 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
             dbContext.SaveChanges();
         }
 
-        public static void SeedTestUsers(UserManager<ApplicationUser> userManager)
+        public static async Task SeedTestUsersAsync(UserManager<ApplicationUser> userManager)
         {
             IdentityResult result1;
-            var user1 = userManager.FindByNameAsync("TestUser1").Result;
-            var user2 = userManager.FindByNameAsync("TestUser2").Result;
+            var user1 = await userManager.FindByNameAsync("TestUser1");
+            var user2 = await userManager.FindByNameAsync("TestUser2");
 
             if (user1 != null)
             {
@@ -90,11 +112,11 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
                 Title = "Tester"
             };
 
-            result1 = userManager.CreateAsync(user1, "Str0ngP@ssword").Result;
+            result1 = await userManager.CreateAsync(user1, "Str0ngP@ssword");
 
             if (result1.Succeeded)
             {
-                userManager.AddToRoleAsync(user1, "Administrator").Wait();
+                await userManager.AddToRoleAsync(user1, DefaultRoles.Administrator);
             }
             else if (!result1.Succeeded)
             {
@@ -118,7 +140,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
                 Title = "Tester"
             };
 
-            result2 = userManager.CreateAsync(user2, "Str0ngP@ssword").Result;
+            result2 = await userManager.CreateAsync(user2, "Str0ngP@ssword");
 
             if (!result2.Succeeded)
             {
