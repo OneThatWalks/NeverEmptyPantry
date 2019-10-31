@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NeverEmptyPantry.Application\NeverEmptyPantry.Application.csproj" />
+    <ProjectReference Include="..\NeverEmptyPantry.Authorization\NeverEmptyPantry.Authorization.csproj" />
     <ProjectReference Include="..\NeverEmptyPantry.Common\NeverEmptyPantry.Common.csproj" />
   </ItemGroup>
 

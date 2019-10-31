@@ -94,13 +94,14 @@ namespace NeverEmptyPantry.Tests.Util
             return mgr;
         }
 
-        public static Mock<RoleManager<TRole>> MockRoleManager<TRole>(IRoleStore<TRole> store = null) where TRole : class
+        public static Mock<RoleManager<TRole>> MockRoleManager<TRole>(IRoleStore<TRole> store = null) where TRole : class, new()
         {
-            store = store ?? new Mock<IRoleStore<TRole>>().Object;
-            var roles = new List<IRoleValidator<TRole>>();
-            roles.Add(new RoleValidator<TRole>());
-            return new Mock<RoleManager<TRole>>(store, roles, new UpperInvariantLookupNormalizer(),
+            store ??= new Mock<IRoleStore<TRole>>().Object;
+            var roles = new List<IRoleValidator<TRole>> { new RoleValidator<TRole>() };
+            var service =  new Mock<RoleManager<TRole>>(store, roles, new UpperInvariantLookupNormalizer(),
                 new IdentityErrorDescriber(), null);
+
+            return service;
         }
 
         public static Mock<IValidator<T>> GetMockValidator<T>()
