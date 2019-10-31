@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using NeverEmptyPantry.Authorization.Permissions;
 using NeverEmptyPantry.Common.Util;
 
 namespace NeverEmptyPantry.Api.Controllers
@@ -11,6 +13,7 @@ namespace NeverEmptyPantry.Api.Controllers
     [ExcludeFromCodeCoverage]
     [Route("api/admin")]
     [ApiController]
+    [Authorize(Roles = DefaultRoles.Administrator)]
     public class AdminController : ControllerBase
     {
         private readonly IAdministratorService _administratorService;

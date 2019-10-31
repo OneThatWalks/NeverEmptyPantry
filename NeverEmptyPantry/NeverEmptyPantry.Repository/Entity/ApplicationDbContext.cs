@@ -3,14 +3,12 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
+using NeverEmptyPantry.Authorization.Permissions;
 using NeverEmptyPantry.Common.Enum;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using System;
-using System.Globalization;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using NeverEmptyPantry.Common.Permissions;
 
 namespace NeverEmptyPantry.Repository.Entity
 {
@@ -91,7 +89,8 @@ namespace NeverEmptyPantry.Repository.Entity
     {
         public static async Task SeedUsersAsync(UserManager<ApplicationUser> userManager)
         {
-            if (await userManager.FindByNameAsync("System") == null)
+            var system = await userManager.FindByNameAsync("System");
+            if (system == null)
             {
                 var user = new ApplicationUser
                 {
@@ -106,6 +105,13 @@ namespace NeverEmptyPantry.Repository.Entity
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, DefaultRoles.Administrator);
+                }
+            }
+            else
+            {
+                if (!await userManager.IsInRoleAsync(system, DefaultRoles.Administrator))
+                {
+                    await userManager.AddToRoleAsync(system, DefaultRoles.Administrator);
                 }
             }
         }

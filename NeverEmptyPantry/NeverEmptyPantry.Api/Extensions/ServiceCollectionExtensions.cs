@@ -65,6 +65,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.AddValidators();
 
+            services.AddPermissionAuthorization();
+
             return builder;
         }
 
@@ -92,6 +94,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddApplication();
 
             builder.AddValidators();
+
+            services.AddPermissionAuthorization();
 
             return builder;
         }
