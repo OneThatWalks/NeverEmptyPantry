@@ -1,6 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NeverEmptyPantry.Api.Interfaces;
