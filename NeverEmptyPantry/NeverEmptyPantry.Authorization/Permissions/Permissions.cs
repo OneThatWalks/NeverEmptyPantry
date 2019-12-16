@@ -9,6 +9,14 @@
             public const string Edit = "Permissions.Users.Edit";
             public const string Delete = "Permissions.Users.Delete";
         }
+
+        public static string[] All = new string[] {
+            // Users
+            Users.View,
+            Users.Create,
+            Users.Edit,
+            Users.Delete
+        };
     }
 
     public static class DefaultRoles
