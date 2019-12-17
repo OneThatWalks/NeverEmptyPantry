@@ -8,7 +8,9 @@ using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Identity;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Security.Claims;
+using NeverEmptyPantry.Authorization.Permissions;
 
 namespace NeverEmptyPantry.Tests.Util
 {
@@ -91,15 +93,30 @@ namespace NeverEmptyPantry.Tests.Util
                 .ReturnsAsync(IdentityResult.Success)
                 .Verifiable();
 
+            mgr.Setup(_ => _.AddToRoleAsync(It.IsAny<TUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success)
+                .Verifiable();
+
+            mgr.Setup(_ => _.RemoveFromRoleAsync(It.IsAny<TUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success)
+                .Verifiable();
+
             return mgr;
         }
 
         public static Mock<RoleManager<TRole>> MockRoleManager<TRole>(IRoleStore<TRole> store = null) where TRole : class, new()
         {
             store ??= new Mock<IRoleStore<TRole>>().Object;
-            var roles = new List<IRoleValidator<TRole>> { new RoleValidator<TRole>() };
-            var service =  new Mock<RoleManager<TRole>>(store, roles, new UpperInvariantLookupNormalizer(),
+            var roleValidators = new List<IRoleValidator<TRole>> { new RoleValidator<TRole>() };
+            var service =  new Mock<RoleManager<TRole>>(store, roleValidators, new UpperInvariantLookupNormalizer(),
                 new IdentityErrorDescriber(), null);
+
+            service.Setup(_ => _.GetClaimsAsync(It.IsAny<TRole>())).ReturnsAsync(new List<Claim>() { new Claim(CustomClaimTypes.Permission, Permissions.Users.Create) }).Verifiable();
+            service.Setup(_ => _.AddClaimAsync(It.IsAny<TRole>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Success).Verifiable();
+            service.Setup(_ => _.RemoveClaimAsync(It.IsAny<TRole>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Success).Verifiable();
+            service.Setup(_ => _.CreateAsync(It.IsAny<TRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
+            service.Setup(_ => _.DeleteAsync(It.IsAny<TRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
+            service.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(true).Verifiable();
 
             return service;
         }
