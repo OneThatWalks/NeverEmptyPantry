@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using NeverEmptyPantry.Common.Models.Admin;
 
 namespace NeverEmptyPantry.Common.Models.Account
 {
@@ -25,9 +27,9 @@ namespace NeverEmptyPantry.Common.Models.Account
 
         public string Title { get; set; }
 
-        public IDictionary<string, string> Claims { get; set; }
+        public IEnumerable<string> Permissions { get; set; }
 
-        public string[] Roles { get; set; }
+        public IEnumerable<RoleModel> Roles { get; set; }
 
         public ProfileModel() { }
 
@@ -44,19 +46,7 @@ namespace NeverEmptyPantry.Common.Models.Account
 
         public ProfileModel AddClaims(IList<Claim> claims)
         {
-            Claims = new Dictionary<string, string>();
-
-            foreach (var claim in claims)
-            {
-                Claims.Add(claim.Type, claim.Value);
-            }
-
-            return this;
-        }
-
-        public ProfileModel AddRoles(IList<string> roles)
-        {
-            Roles = roles.ToArray();
+            Permissions = claims.Select(c => c.Value).ToArray();
 
             return this;
         }

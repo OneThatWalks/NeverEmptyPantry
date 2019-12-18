@@ -7,8 +7,10 @@ using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NeverEmptyPantry.Common.Models.Admin;
 
 namespace NeverEmptyPantry.Application.Services
 {
@@ -17,12 +19,14 @@ namespace NeverEmptyPantry.Application.Services
         private readonly IRepository<OfficeLocation> _officeLocationRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IValidator<ProfileModel> _profileValidator;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountService(IRepository<OfficeLocation> officeLocationRepository, UserManager<ApplicationUser> userManager, IValidator<ProfileModel> profileValidator)
+        public AccountService(IRepository<OfficeLocation> officeLocationRepository, UserManager<ApplicationUser> userManager, IValidator<ProfileModel> profileValidator, RoleManager<IdentityRole> roleManager)
         {
             _officeLocationRepository = officeLocationRepository;
             _userManager = userManager;
             _profileValidator = profileValidator;
+            _roleManager = roleManager;
         }
 
         public async Task<IOperationResult> RegisterAsync(RegistrationModel model)
@@ -88,11 +92,28 @@ namespace NeverEmptyPantry.Application.Services
                 });
             }
 
-            var claims = await _userManager.GetClaimsAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var roles = _roleManager.Roles.Where(r => userRoles.Contains(r.Name)).ToList();
 
-            var roles = await _userManager.GetRolesAsync(user);
+            var profile = new ProfileModel(user).AddClaims(userClaims);
+            var profileRoles = new List<RoleModel>();
 
-            var profile = new ProfileModel(user).AddClaims(claims).AddRoles(roles);
+            foreach (var role in roles)
+            {
+                var claims = await _roleManager.GetClaimsAsync(role);
+
+                var roleModel = new RoleModel()
+                {
+                    Name = role.Name,
+                    Id = role.Id,
+                    Permissions = claims.Select(c => c.Value)
+                };
+
+                profileRoles.Add(roleModel);
+            }
+
+            profile.Roles = profileRoles;
 
             return OperationResult<ProfileModel>.Success(profile);
         }

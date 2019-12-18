@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using NeverEmptyPantry.Common.Interfaces.Application;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using NeverEmptyPantry.Authorization.Permissions;
+using NeverEmptyPantry.Common.Models.Account;
+using NeverEmptyPantry.Common.Models.Admin;
 using NeverEmptyPantry.Common.Util;
 
 namespace NeverEmptyPantry.Api.Controllers
@@ -43,46 +46,35 @@ namespace NeverEmptyPantry.Api.Controllers
             return ApiHelper.ActionFromOperationResult(permissions);
         }
 
-        [HttpPost("role/{roleId}/permissions/add")]
+        [HttpPut("roles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> AddPermissionsToRole(string roleId, [FromBody] IEnumerable<string> model)
+        public async Task<IActionResult> UpdateRole([FromBody] RoleModel model)
         {
-            var result = await _administratorService.AddPermissionsToRoleAsync(roleId, model);
+            var result = await _administratorService.UpdateRole(model);
 
             return ApiHelper.ActionFromOperationResult(result);
         }
 
-        [HttpDelete("role/{roleId}/permissions/remove")]
+        [HttpPost("roles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> RemovePermissionsFromRole(string roleId, [FromBody] IEnumerable<string> model)
-        {
-            var result = await _administratorService.RemovePermissionsFromRoleAsync(roleId, model);
-
-            return ApiHelper.ActionFromOperationResult(result);
-        }
-
-        [HttpPost("roles/add")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> AddRole([FromBody] string model)
+        public async Task<IActionResult> AddRole([FromBody] RoleModel model)
         {
             var result = await _administratorService.AddRoleAsync(model);
 
             return ApiHelper.ActionFromOperationResult(result);
         }
 
-        [HttpPost("roles/add")]
+        [HttpDelete("roles/{roleId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> RemoveRole([FromBody] string model)
+        public async Task<IActionResult> RemoveRole(string roleId)
         {
-            var result = await _administratorService.RemoveRoleAsync(model);
+            var result = await _administratorService.RemoveRoleAsync(roleId);
 
             return ApiHelper.ActionFromOperationResult(result);
         }
@@ -97,24 +89,13 @@ namespace NeverEmptyPantry.Api.Controllers
             return ApiHelper.ActionFromOperationResult(result);
         }
 
-        [HttpPost("users/{userId}/roles/add")]
+        [HttpPut("users/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> AddUserToRole(string userId, [FromBody] string model)
+        public async Task<IActionResult> UpdateUser(string userId, [FromBody] ProfileModel model)
         {
-            var result = await _administratorService.AddUserToRoleAsync(userId, model);
-
-            return ApiHelper.ActionFromOperationResult(result);
-        }
-
-        [HttpDelete("users/{userId}/roles/remove")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> RemoveUserFromRole(string userId, [FromBody] string model)
-        {
-            var result = await _administratorService.RemoveUserFromRoleAsync(userId, model);
+            var result = await _administratorService.UpdateUser(userId, model);
 
             return ApiHelper.ActionFromOperationResult(result);
         }

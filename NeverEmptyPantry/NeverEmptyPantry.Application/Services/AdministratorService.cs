@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NeverEmptyPantry.Authorization.Permissions;
@@ -14,12 +8,17 @@ using NeverEmptyPantry.Common.Models;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Admin;
 using NeverEmptyPantry.Common.Models.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace NeverEmptyPantry.Application.Services
 {
     public class AdministratorService : IAdministratorService
     {
-        // TODO: Add logging
         private readonly ILogger<IAdministratorService> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -33,10 +32,14 @@ namespace NeverEmptyPantry.Application.Services
 
         public async Task<IOperationResult<IEnumerable<RoleModel>>> GetRolesAsync()
         {
+            _logger.LogDebug($"Executing {nameof(GetRolesAsync)}");
+
             var roles = await _roleManager.Roles.ToListAsync();
 
             if (!roles.Any())
             {
+                _logger.LogDebug($"Executed {nameof(GetRolesAsync)}.  Returned NoRoles.");
+
                 return OperationResult<IEnumerable<RoleModel>>.Failed(new OperationError()
                 {
                     Name = "NoRoles",
@@ -44,134 +47,120 @@ namespace NeverEmptyPantry.Application.Services
                 });
             }
 
-            var tasks = roles.Select(async role => new RoleModel()
+            var tasks = roles.Select(async role =>
             {
-                RoleId = role.Id,
-                Name = role.Name,
-                Claims = await _roleManager.GetClaimsAsync(role)
+                var permissions = await _roleManager.GetClaimsAsync(role);
+
+                return new RoleModel()
+                {
+                    Id = role.Id,
+                    Name = role.Name,
+                    Permissions = permissions.Select(p => p.Value)
+                };
             }).ToList();
 
             await Task.WhenAll(tasks);
 
             var results = tasks.Select(t => t.Result);
 
+            _logger.LogDebug($"Executed {nameof(GetRolesAsync)}.  Returned Roles.");
+
             return OperationResult<IEnumerable<RoleModel>>.Success(results);
         }
 
         public Task<IOperationResult<IEnumerable<string>>> GetPermissionsAsync()
         {
+            _logger.LogDebug($"Executed {nameof(GetPermissionsAsync)}.  Returned Permissions.");
+
             return Task.FromResult(OperationResult<IEnumerable<string>>.Success(Permissions.All));
         }
 
-        public async Task<IOperationResult> AddPermissionsToRoleAsync(string roleName, IEnumerable<string> permissions)
+        public async Task<IOperationResult<RoleModel>> UpdateRole(RoleModel role)
         {
-            var roles = await _roleManager.Roles.ToListAsync();
+            _logger.LogDebug($"Executing {nameof(UpdateRole)}. Param: {JsonConvert.SerializeObject(role)}");
 
-            var role = roles.FirstOrDefault(r => r.Name.Equals(roleName));
+            var roleManagerRole = _roleManager.Roles.FirstOrDefault(r => r.Id == role.Id);
 
-            if (role == null)
+            if (roleManagerRole == null)
             {
-                return OperationResult.Failed(new OperationError()
-                {
-                    Name = "NoRoles",
-                    Description = "No role exists that match the role id provided"
-                });
+                _logger.LogDebug($"Executed {nameof(UpdateRole)}.  Returned NoRole.");
+
+                return OperationResult<RoleModel>.Failed(new OperationError()
+                    { Name = "NoRole", Description = "Specified role does not exist" });
             }
 
-            var claims = await _roleManager.GetClaimsAsync(role);
+            roleManagerRole.Name = role.Name;
+            var updateRoleResult = await _roleManager.UpdateAsync(roleManagerRole);
 
-            var permissionsToAdd = permissions.Where(p => !claims.Any(c => c.Value.Equals(p))).ToList();
-
-            if (permissionsToAdd.Any())
+            if (!updateRoleResult.Succeeded)
             {
-                var tasks = permissionsToAdd.Select(p => _roleManager.AddClaimAsync(role, new Claim(CustomClaimTypes.Permission, p))).ToList();
-                await Task.WhenAll(tasks);
+                _logger.LogDebug($"Executed {nameof(UpdateRole)}.  Returned IdentityError.");
 
-                var failed = tasks.Where(t => !t.Result.Succeeded).ToList();
-
-                if (failed.Any())
-                {
-                    var errors = failed.Select(f => new OperationError()
-                    {
-                        Name = "IdentityError",
-                        Description = f.Result.Errors.First().Description
-                    });
-                    return OperationResult.Failed(errors.ToArray());
-                }
+                return OperationResult<RoleModel>.Failed(updateRoleResult.Errors.Select(err => new OperationError()
+                    { Name = "IdentityError", Description = err.Description }).ToArray());
             }
 
-            return OperationResult.Success;
+            var claims = await _roleManager.GetClaimsAsync(roleManagerRole);
+
+            var claimsToRemove = claims.Where(c => !role.Permissions.Any(rp => rp.Equals(c.Value))).ToList();
+            var claimsToAdd = role.Permissions.Where(rp => !claims.Any(c => c.Value.Equals(rp))).Select(p => new Claim(CustomClaimTypes.Permission, p));
+
+            var removeTasks = claimsToRemove.Select(claim => _roleManager.RemoveClaimAsync(roleManagerRole, claim));
+            var addTasks = claimsToAdd.Select(claim => _roleManager.AddClaimAsync(roleManagerRole, claim));
+
+            await Task.WhenAll(removeTasks.Union(addTasks).ToList());
+
+            _logger.LogDebug($"Executed {nameof(UpdateRole)}.  Returned RoleModel.");
+
+            return OperationResult<RoleModel>.Success(role);
         }
 
-        public async Task<IOperationResult> RemovePermissionsFromRoleAsync(string roleName, IEnumerable<string> permissions)
+
+        public async Task<IOperationResult<RoleModel>> AddRoleAsync(RoleModel role)
         {
-            var roles = await _roleManager.Roles.ToListAsync();
+            _logger.LogDebug($"Executing {nameof(AddRoleAsync)}. Param: {JsonConvert.SerializeObject(role)}");
 
-            var role = roles.FirstOrDefault(r => r.Name.Equals(roleName));
+            var roleExists = await _roleManager.Roles.AnyAsync(r =>
+                r.Name.Equals(role.Name, StringComparison.InvariantCultureIgnoreCase));
 
-            if (role == null)
+            if (roleExists)
             {
-                return OperationResult.Failed(new OperationError()
-                {
-                    Name = "NoRoles",
-                    Description = "No role exists that match the role name provided"
-                });
-            }
+                _logger.LogDebug($"Executed {nameof(AddRoleAsync)}.  Returned RoleExists.");
 
-            var claims = await _roleManager.GetClaimsAsync(role);
-
-            var permissionsToRemove = permissions.Where(p => claims.Any(c => c.Value.Equals(p))).ToList();
-
-            if (permissionsToRemove.Any())
-            {
-                var tasks = permissionsToRemove.Select(p => _roleManager.RemoveClaimAsync(role, new Claim(CustomClaimTypes.Permission, p))).ToList();
-                await Task.WhenAll(tasks);
-
-                var failed = tasks.Where(t => !t.Result.Succeeded).ToList();
-
-                if (failed.Any())
-                {
-                    var errors = failed.Select(f => new OperationError()
-                    {
-                        Name = "IdentityError",
-                        Description = f.Result.Errors.First().Description
-                    });
-                    return OperationResult.Failed(errors.ToArray());
-                }
-            }
-
-            return OperationResult.Success;
-        }
-
-        public async Task<IOperationResult<RoleModel>> AddRoleAsync(string name)
-        {
-            var roles = await _roleManager.Roles.ToListAsync();
-
-            if (roles.Exists(r => r.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
-            {
                 return OperationResult<RoleModel>.Failed(new OperationError()
                 { Name = "RoleExists", Description = "Specified role already exists" });
             }
 
-            var role = new IdentityRole(name);
+            var roleManagerRole = new IdentityRole(role.Name);
 
-            var identityResult = await _roleManager.CreateAsync(role);
+            var identityResult = await _roleManager.CreateAsync(roleManagerRole);
 
             if (!identityResult.Succeeded)
             {
-
                 return OperationResult<RoleModel>.Failed(identityResult.Errors.Select(err => new OperationError()
                 { Name = "IdentityError", Description = err.Description }).ToArray());
             }
 
-            role = _roleManager.Roles.FirstOrDefault(r => r.Name.Equals(name));
-            var claims = await _roleManager.GetClaimsAsync(role);
+            roleManagerRole = await _roleManager.FindByNameAsync(role.Name);
+            var claims = role.Permissions.Select(p => new Claim(CustomClaimTypes.Permission, p));
+            var addTasks = claims.Select(c => _roleManager.AddClaimAsync(roleManagerRole, c)).ToList();
+            await Task.WhenAll(addTasks);
+
+            if (addTasks.Any(add => !add.Result.Succeeded))
+            {
+                _logger.LogDebug($"Executed {nameof(AddRoleAsync)}.  Returned IdentityError.");
+
+                return OperationResult<RoleModel>.Failed(addTasks.SelectMany(t => t.Result.Errors).Select(err => new OperationError()
+                    { Name = "IdentityError", Description = err.Description }).ToArray());
+            }
+
+            claims = await _roleManager.GetClaimsAsync(roleManagerRole);
 
             var roleModel = new RoleModel()
             {
-                Name = role?.Name,
-                RoleId = role?.Id,
-                Claims = claims
+                Name = roleManagerRole.Name,
+                Id = roleManagerRole.Id,
+                Permissions = claims.Select(c => c.Value)
             };
 
             return OperationResult<RoleModel>.Success(roleModel);
@@ -198,7 +187,7 @@ namespace NeverEmptyPantry.Application.Services
 
             var roleModel = new RoleModel()
             {
-                RoleId = role?.Id,
+                Id = role?.Id,
                 Name = role?.Name
             };
 
@@ -214,77 +203,36 @@ namespace NeverEmptyPantry.Application.Services
             var enumeratedProfiles = profiles.ToList();
             Parallel.ForEach(enumeratedProfiles, async (profile) =>
             {
-                profile.Profile.AddRoles(await _userManager.GetRolesAsync(profile.ApplicationUser));
-                profile.Profile.AddClaims(await _userManager.GetClaimsAsync(profile.ApplicationUser));
+                var userRoles = await _userManager.GetRolesAsync(profile.ApplicationUser);
+                var userClaims = await _userManager.GetClaimsAsync(profile.ApplicationUser);
+                var roles = _roleManager.Roles.Where(r => userRoles.Contains(r.Name)).ToList();
+                profile.Profile.AddClaims(userClaims);
+
+                var profileRoles = new List<RoleModel>();
+
+                foreach (var role in roles)
+                {
+                    var claims = await _roleManager.GetClaimsAsync(role);
+
+                    var roleModel = new RoleModel()
+                    {
+                        Name = role.Name,
+                        Id = role.Id,
+                        Permissions = claims.Select(c => c.Value)
+                    };
+
+                    profileRoles.Add(roleModel);
+                }
+
+                profile.Profile.Roles = profileRoles;
             });
 
             return OperationResult<IEnumerable<ProfileModel>>.Success(enumeratedProfiles.Select(p => p.Profile));
         }
 
-        public async Task<IOperationResult<ProfileModel>> AddUserToRoleAsync(string userId, string roleName)
+        public async Task<IOperationResult<ProfileModel>> UpdateUser(string userId, ProfileModel roleName)
         {
-            var roleExists = await _roleManager.RoleExistsAsync(roleName);
-
-            if (!roleExists)
-            {
-                return OperationResult<ProfileModel>.Failed(new OperationError()
-                    {Name = "NoRole", Description = "Specified role does not exist"});
-            }
-
-            var user = _userManager.Users.FirstOrDefault(u => u.Id.Equals(userId));
-
-            if (user == null)
-            {
-                return OperationResult<ProfileModel>.Failed(new OperationError()
-                    { Name = "NoUser", Description = "Specified user does not exist" });
-            }
-
-            var identityResult = await _userManager.AddToRoleAsync(user, roleName);
-
-            if (!identityResult.Succeeded)
-            {
-                return OperationResult<ProfileModel>.Failed(identityResult.Errors.Select(err => new OperationError()
-                    { Name = "IdentityError", Description = err.Description }).ToArray());
-            }
-
-            var profile = new ProfileModel(user);
-            profile.AddRoles(await _userManager.GetRolesAsync(user));
-            profile.AddClaims(await _userManager.GetClaimsAsync(user));
-
-            return OperationResult<ProfileModel>.Success(profile);
-        }
-
-        public async Task<IOperationResult<ProfileModel>> RemoveUserFromRoleAsync(string userId, string roleName)
-        {
-            var roleExists = await _roleManager.RoleExistsAsync(roleName);
-
-            if (!roleExists)
-            {
-                return OperationResult<ProfileModel>.Failed(new OperationError()
-                    { Name = "NoRole", Description = "Specified role does not exist" });
-            }
-
-            var user = _userManager.Users.FirstOrDefault(u => u.Id.Equals(userId));
-
-            if (user == null)
-            {
-                return OperationResult<ProfileModel>.Failed(new OperationError()
-                    { Name = "NoUser", Description = "Specified user does not exist" });
-            }
-
-            var identityResult = await _userManager.RemoveFromRoleAsync(user, roleName);
-
-            if (!identityResult.Succeeded)
-            {
-                return OperationResult<ProfileModel>.Failed(identityResult.Errors.Select(err => new OperationError()
-                    { Name = "IdentityError", Description = err.Description }).ToArray());
-            }
-
-            var profile = new ProfileModel(user);
-            profile.AddRoles(await _userManager.GetRolesAsync(user));
-            profile.AddClaims(await _userManager.GetClaimsAsync(user));
-
-            return OperationResult<ProfileModel>.Success(profile);
+            throw new NotImplementedException();
         }
     }
 }

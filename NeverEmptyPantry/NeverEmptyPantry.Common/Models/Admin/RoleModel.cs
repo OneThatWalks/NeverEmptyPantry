@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using NeverEmptyPantry.Common.Models.Account;
 
@@ -6,9 +7,11 @@ namespace NeverEmptyPantry.Common.Models.Admin
 {
     public class RoleModel
     {
-        public string RoleId { get; set; }
+        public string Id { get; set; }
+
+        [Required]
         public string Name { get; set; }
 
-        public IEnumerable<Claim> Claims { get; set; }
+        public IEnumerable<string> Permissions { get; set; }
     }
 }

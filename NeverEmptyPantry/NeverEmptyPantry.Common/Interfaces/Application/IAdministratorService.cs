@@ -20,27 +20,18 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
         Task<IOperationResult<IEnumerable<string>>> GetPermissionsAsync();
 
         /// <summary>
-        /// Adds permissions to a role
+        /// Updates a role
         /// </summary>
-        /// <param name="roleName">The role name</param>
-        /// <param name="permissions">The list of permissions</param>
-        /// <returns>A task result that represents the result of the add operation</returns>
-        Task<IOperationResult> AddPermissionsToRoleAsync(string roleName, IEnumerable<string> permissions);
-
-        /// <summary>
-        /// Removes permissions from a role
-        /// </summary>
-        /// <param name="roleName">The role name</param>
-        /// <param name="permissions">The list of permissions</param>
-        /// <returns>A task result that represents the result of the remove operation</returns>
-        Task<IOperationResult> RemovePermissionsFromRoleAsync(string roleName, IEnumerable<string> permissions);
+        /// <param name="role">The role model</param>
+        /// <returns>A task result that represents the updated role</returns>
+        Task<IOperationResult<RoleModel>> UpdateRole(RoleModel role);
 
         /// <summary>
         /// Adds a role
         /// </summary>
         /// <param name="name">The name of the role</param>
         /// <returns>A task result that represents the completion of the add operation</returns>
-        Task<IOperationResult<RoleModel>> AddRoleAsync(string name);
+        Task<IOperationResult<RoleModel>> AddRoleAsync(RoleModel name);
 
         /// <summary>
         /// Removes a role
@@ -61,14 +52,6 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
         /// <param name="userId">The user identifier</param>
         /// <param name="roleName">the role name</param>
         /// <returns>A task result that represents the completion of the add user to role operation</returns>
-        Task<IOperationResult<ProfileModel>> AddUserToRoleAsync(string userId, string roleName);
-
-        /// <summary>
-        /// Removes a user from a role
-        /// </summary>
-        /// <param name="userId">The user identifier</param>
-        /// <param name="roleName">the role name</param>
-        /// <returns>A task result that represents the completion of the remove user from role operation</returns>
-        Task<IOperationResult<ProfileModel>> RemoveUserFromRoleAsync(string userId, string roleName);
+        Task<IOperationResult<ProfileModel>> UpdateUser(string userId, ProfileModel roleName);
     }
 }
