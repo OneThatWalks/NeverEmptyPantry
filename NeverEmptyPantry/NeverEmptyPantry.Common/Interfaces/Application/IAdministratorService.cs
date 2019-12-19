@@ -24,7 +24,7 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
         /// </summary>
         /// <param name="role">The role model</param>
         /// <returns>A task result that represents the updated role</returns>
-        Task<IOperationResult<RoleModel>> UpdateRole(RoleModel role);
+        Task<IOperationResult<RoleModel>> UpdateRoleAsync(RoleModel role);
 
         /// <summary>
         /// Adds a role
@@ -47,11 +47,11 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
         Task<IOperationResult<IEnumerable<ProfileModel>>> GetUsersAsync();
 
         /// <summary>
-        /// Adds a user to a role
+        /// Updates a user
         /// </summary>
         /// <param name="userId">The user identifier</param>
-        /// <param name="roleName">the role name</param>
-        /// <returns>A task result that represents the completion of the add user to role operation</returns>
-        Task<IOperationResult<ProfileModel>> UpdateUser(string userId, ProfileModel roleName);
+        /// <param name="profile">The users updated profile</param>
+        /// <returns>A task result that represents the completion of the update user operation</returns>
+        Task<IOperationResult<ProfileModel>> UpdateUserAsync(string userId, ProfileModel profile);
     }
 }

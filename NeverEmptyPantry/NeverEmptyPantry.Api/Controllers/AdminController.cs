@@ -52,7 +52,7 @@ namespace NeverEmptyPantry.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UpdateRole([FromBody] RoleModel model)
         {
-            var result = await _administratorService.UpdateRole(model);
+            var result = await _administratorService.UpdateRoleAsync(model);
 
             return ApiHelper.ActionFromOperationResult(result);
         }
@@ -95,7 +95,7 @@ namespace NeverEmptyPantry.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UpdateUser(string userId, [FromBody] ProfileModel model)
         {
-            var result = await _administratorService.UpdateUser(userId, model);
+            var result = await _administratorService.UpdateUserAsync(userId, model);
 
             return ApiHelper.ActionFromOperationResult(result);
         }

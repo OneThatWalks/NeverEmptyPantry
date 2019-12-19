@@ -11,7 +11,9 @@ using NeverEmptyPantry.Tests.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using NeverEmptyPantry.Common.Models.Account;
 using MockFactory = NeverEmptyPantry.Tests.Util.MockFactory;
 
 namespace NeverEmptyPantry.Tests.Application
@@ -23,8 +25,6 @@ namespace NeverEmptyPantry.Tests.Application
         private Mock<ILogger<IAdministratorService>> _mockLogger;
         private Mock<RoleManager<IdentityRole>> _mockRoleManager;
         private Mock<UserManager<ApplicationUser>> _mockUserManager;
-
-        // TODO: Might want to analyze error handling somewhere in the service
 
         [SetUp]
         public void SetUp()
@@ -40,6 +40,7 @@ namespace NeverEmptyPantry.Tests.Application
             };
             var asyncRolesEnumerable = new TestAsyncEnumerable<IdentityRole>(roles);
             _mockRoleManager.Setup(_ => _.Roles).Returns(asyncRolesEnumerable.AsQueryable()).Verifiable();
+            _mockRoleManager.Setup(_ => _.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new IdentityRole(DefaultRoles.Administrator)).Verifiable();
 
             _mockUserManager = MockFactory.MockUserManager<ApplicationUser>();
             var users = new List<ApplicationUser>()
@@ -83,6 +84,7 @@ namespace NeverEmptyPantry.Tests.Application
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Data, Is.Not.Null);
             Assert.That(result.Data.Any(), Is.True);
+            Assert.That(result.Data.First().Permissions.Any(), Is.True);
         }
 
         [Test]
@@ -96,6 +98,23 @@ namespace NeverEmptyPantry.Tests.Application
             // Assert
             _mockRoleManager.Verify(_ => _.Roles, Times.Once);
             _mockRoleManager.Verify(_ => _.GetClaimsAsync(It.IsAny<IdentityRole>()), Times.AtLeast(2));
+        }
+
+        [Test]
+        public async Task GetRolesAsync_ReturnsNoRoles_WhenNoRoles()
+        {
+            // Arrange
+            var roles = new List<IdentityRole>();
+            var asyncRolesEnumerable = new TestAsyncEnumerable<IdentityRole>(roles);
+            _mockRoleManager.Setup(_ => _.Roles).Returns(asyncRolesEnumerable.AsQueryable()).Verifiable();
+
+            // Act
+            var result = await _administratorService.GetRolesAsync();
+
+            // Assert
+            Assert.That(result.Succeeded, Is.False);
+            _mockRoleManager.Verify(_ => _.Roles, Times.Once);
+            _mockRoleManager.Verify(_ => _.GetClaimsAsync(It.IsAny<IdentityRole>()), Times.Never);
         }
 
         #endregion GetRolesAsync
@@ -125,6 +144,7 @@ namespace NeverEmptyPantry.Tests.Application
             // Arrange
             var role = new RoleModel()
             {
+                Id = "UPDATEROLE",
                 Name = "UpdateRole",
                 Permissions = new List<string>()
                 {
@@ -133,16 +153,40 @@ namespace NeverEmptyPantry.Tests.Application
             };
 
             // Act
-            var result = await _administratorService.UpdateRole(role);
+            var result = await _administratorService.UpdateRoleAsync(role);
 
             // Assert
             Assert.That(result.Succeeded, Is.True);
         }
 
         [Test]
+        public async Task UpdateRole_AddsRemoves_WhenSuccessful()
+        {
+            // Arrange
+            var role = new RoleModel()
+            {
+                Id = "UPDATEROLE",
+                Name = "UpdateRole",
+                Permissions = new List<string>()
+                {
+                    Permissions.Users.Delete
+                }
+            };
+
+            // Act
+            var result = await _administratorService.UpdateRoleAsync(role);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.True);
+            _mockRoleManager.Verify(_ => _.RemoveClaimAsync(It.IsAny<IdentityRole>(), It.IsAny<Claim>()), Times.Once);
+            _mockRoleManager.Verify(_ => _.AddClaimAsync(It.IsAny<IdentityRole>(), It.IsAny<Claim>()), Times.Once);
+        }
+
+        [Test]
         public async Task UpdateRole_ReturnsFailed_WhenNoRoleExists()
         {
             // Arrange
+            _mockRoleManager.Setup(_ => _.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((IdentityRole)null).Verifiable();
             var role = new RoleModel()
             {
                 Name = "TestRole",
@@ -153,7 +197,29 @@ namespace NeverEmptyPantry.Tests.Application
             };
 
             // Act
-            var result = await _administratorService.UpdateRole(role);
+            var result = await _administratorService.UpdateRoleAsync(role);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.False);
+        }
+
+        [Test]
+        public async Task UpdateRole_ReturnsFailure_WhenIdentityError()
+        {
+            // Arrange
+            _mockRoleManager.Setup(_ => _.UpdateAsync(It.IsAny<IdentityRole>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Error", Code = "Error" })).Verifiable();
+            var role = new RoleModel()
+            {
+                Id = "UPDATEROLE",
+                Name = "UpdateRole",
+                Permissions = new List<string>()
+                {
+                    Permissions.Users.Create
+                }
+            };
+
+            // Act
+            var result = await _administratorService.UpdateRoleAsync(role);
 
             // Assert
             Assert.That(result.Succeeded, Is.False);
@@ -167,6 +233,7 @@ namespace NeverEmptyPantry.Tests.Application
         public async Task AddRoleAsync_ReturnsSuccess_WhenSuccessful()
         {
             // Arrange
+            _mockRoleManager.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false).Verifiable();
             var role = new RoleModel()
             {
                 Name = "TestRole",
@@ -178,6 +245,29 @@ namespace NeverEmptyPantry.Tests.Application
 
             // Assert
             Assert.That(result.Succeeded, Is.True);
+        }
+
+        [Test]
+        public async Task AddRoleAsync_AddExpectedPermissions_WhenSuccessful()
+        {
+            // Arrange
+            _mockRoleManager.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false).Verifiable();
+            var role = new RoleModel()
+            {
+                Name = "TestRole",
+                Permissions = new List<string>()
+                {
+                    Permissions.Users.View
+                }
+            };
+
+            // Act
+            var result = await _administratorService.AddRoleAsync(role);
+
+            // Assert
+            Assert.That(result.Data.Permissions.Any(), Is.True);
+            _mockRoleManager.Verify(_ => _.AddClaimAsync(It.IsAny<IdentityRole>(), It.IsAny<Claim>()), Times.Once);
+            _mockRoleManager.Verify(_ => _.GetClaimsAsync(It.IsAny<IdentityRole>()), Times.Once);
         }
 
         [Test]
@@ -198,9 +288,10 @@ namespace NeverEmptyPantry.Tests.Application
         }
 
         [Test]
-        public async Task AddRoleAsync_ReturnsFailure_WheIdentityError()
+        public async Task AddRoleAsync_ReturnsFailure_WhenIdentityError()
         {
             // Arrange
+            _mockRoleManager.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false).Verifiable();
             _mockRoleManager.Setup(_ => _.CreateAsync(It.IsAny<IdentityRole>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Test", Code = "Test" })).Verifiable();
             var role = new RoleModel()
             {
@@ -213,9 +304,33 @@ namespace NeverEmptyPantry.Tests.Application
 
             // Assert
             Assert.That(result.Succeeded, Is.False);
-            _mockRoleManager.Verify(_ => _.Roles, Times.Exactly(1));
             _mockRoleManager.Verify(_ => _.GetClaimsAsync(It.IsAny<IdentityRole>()), Times.Never);
             _mockRoleManager.Verify(_ => _.CreateAsync(It.IsAny<IdentityRole>()), Times.Once);
+        }
+
+        [Test]
+        public async Task AddRoleAsync_ReturnsFailure_WhenIdentityErrorOnPermissions()
+        {
+            // Arrange
+            _mockRoleManager.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false).Verifiable();
+            _mockRoleManager.Setup(_ => _.AddClaimAsync(It.IsAny<IdentityRole>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Test", Code = "Test" })).Verifiable();
+            var role = new RoleModel()
+            {
+                Name = "TestRole",
+                Permissions = new List<string>()
+                {
+                    Permissions.Users.Edit
+                }
+            };
+
+            // Act
+            var result = await _administratorService.AddRoleAsync(role);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.False);
+            _mockRoleManager.Verify(_ => _.AddClaimAsync(It.IsAny<IdentityRole>(), It.IsAny<Claim>()), Times.Once);
+            _mockRoleManager.Verify(_ => _.CreateAsync(It.IsAny<IdentityRole>()), Times.Once);
+            _mockRoleManager.Verify(_ => _.GetClaimsAsync(It.IsAny<IdentityRole>()), Times.Never);
         }
 
         #endregion AddRoleAsync
@@ -235,7 +350,7 @@ namespace NeverEmptyPantry.Tests.Application
         }
 
         [Test]
-        public async Task RemoveRoleAsync_CallsRoleManagerFourTimesWithExpectedParameters_WhenSuccessful()
+        public async Task RemoveRoleAsync_CallsRoleManagerAsExpected_WhenSuccessful()
         {
             // Arrange
             const string name = "RemoveRole";
@@ -245,26 +360,25 @@ namespace NeverEmptyPantry.Tests.Application
 
             // Assert
             Assert.That(result.Succeeded, Is.True);
-            _mockRoleManager.Verify(_ => _.Roles, Times.Exactly(1));
-            _mockRoleManager.Verify(_ => _.DeleteAsync(It.Is<IdentityRole>(r => r.Name.Equals(name))), Times.Once);
+            _mockRoleManager.Verify(_ => _.DeleteAsync(It.IsAny<IdentityRole>()), Times.Once);
         }
 
         [Test]
         public async Task RemoveRoleAsync_ReturnsFailure_WhenNoExistingRole()
         {
             // Arrange
+            _mockRoleManager.Setup(_ => _.FindByNameAsync(It.IsAny<string>())).ReturnsAsync((IdentityRole)null).Verifiable();
 
             // Act
             var result = await _administratorService.RemoveRoleAsync("TestRole");
 
             // Assert
             Assert.That(result.Succeeded, Is.False);
-            _mockRoleManager.Verify(_ => _.Roles, Times.Exactly(1));
             _mockRoleManager.Verify(_ => _.DeleteAsync(It.IsAny<IdentityRole>()), Times.Never);
         }
 
         [Test]
-        public async Task RemoveRoleAsync_ReturnsFailure_WheIdentityError()
+        public async Task RemoveRoleAsync_ReturnsFailure_WhenIdentityError()
         {
             // Arrange
             _mockRoleManager.Setup(_ => _.DeleteAsync(It.IsAny<IdentityRole>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Test", Code = "Test" })).Verifiable();
@@ -274,7 +388,6 @@ namespace NeverEmptyPantry.Tests.Application
 
             // Assert
             Assert.That(result.Succeeded, Is.False);
-            _mockRoleManager.Verify(_ => _.Roles, Times.Exactly(1));
             _mockRoleManager.Verify(_ => _.DeleteAsync(It.IsAny<IdentityRole>()), Times.Once);
         }
 
@@ -310,8 +423,214 @@ namespace NeverEmptyPantry.Tests.Application
             _mockUserManager.Verify(_ => _.GetClaimsAsync(It.IsAny<ApplicationUser>()), Times.Once);
         }
 
+        [Test]
+        public async Task GetUsersAsync_ReturnsExpectedProfiles_WhenSuccessful()
+        {
+            // Arrange
+            _mockUserManager.Setup(_ => _.GetRolesAsync(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new List<string>() { DefaultRoles.User });
+
+            // Act
+            var result = await _administratorService.GetUsersAsync();
+
+            // Assert
+            Assert.That(result.Succeeded, Is.True);
+            Assert.That(result.Data.Any(), Is.True);
+            Assert.That(result.Data.First().Roles.First().Permissions.Any(), Is.True);
+        }
+
         #endregion GetUsersAsync
 
-        
+        #region UpdateUserAsync
+
+        [Test]
+        public async Task UpdateUserAsync_ReturnsSuccess_WhenSuccessful()
+        {
+            // Arrange
+            var profile = new ProfileModel()
+            {
+                FirstName = "Test",
+                LastName = "User"
+            };
+
+            // Act
+            var result = await _administratorService.UpdateUserAsync("TestUser", profile);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.True);
+        }
+
+        [Test]
+        public async Task UpdateUserAsync_ReturnsFailure_WhenNoUser()
+        {
+            // Arrange
+            _mockUserManager.Setup(_ => _.FindByIdAsync(It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser)null)
+                .Verifiable();
+            var profile = new ProfileModel()
+            {
+                FirstName = "Test",
+                LastName = "User"
+            };
+
+            // Act
+            var result = await _administratorService.UpdateUserAsync("TestUser", profile);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.False);
+        }
+
+        [Test]
+        public async Task UpdateUserAsync_ReturnsUpdatedProfile_WhenEveryPropertyUpdated()
+        {
+            // Arrange
+            var profile = new ProfileModel()
+            {
+                Email = "testemail",
+                UserName = "testuser",
+                PhoneNumber = "18008888888",
+                FirstName = "Test",
+                LastName = "User",
+                OfficeLocation = new OfficeLocation()
+                {
+                    Id = 2,
+                    Name = "Office 2"
+                },
+                Title = "Title"
+            };
+
+            // Act
+            var result = await _administratorService.UpdateUserAsync("TestUser", profile);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.True);
+            Assert.That(result.Data.Email, Is.EqualTo(profile.Email));
+            Assert.That(result.Data.UserName, Is.EqualTo(profile.UserName));
+            Assert.That(result.Data.PhoneNumber, Is.EqualTo(profile.PhoneNumber));
+            Assert.That(result.Data.FirstName, Is.EqualTo(profile.FirstName));
+            Assert.That(result.Data.LastName, Is.EqualTo(profile.LastName));
+            Assert.That(result.Data.OfficeLocation, Is.EqualTo(profile.OfficeLocation));
+            Assert.That(result.Data.Title, Is.EqualTo(profile.Title));
+        }
+
+        [Test]
+        public async Task UpdateUserAsync_ReturnsFailure_WhenIdentityError()
+        {
+            // Arrange
+            _mockUserManager.Setup(_ => _.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Error", Code = "Error" })).Verifiable();
+            var profile = new ProfileModel()
+            {
+                Email = "testemail",
+                UserName = "testuser",
+                PhoneNumber = "18008888888",
+                FirstName = "Test",
+                LastName = "User",
+                OfficeLocation = new OfficeLocation()
+                {
+                    Id = 2,
+                    Name = "Office 2"
+                },
+                Title = "Title"
+            };
+
+            // Act
+            var result = await _administratorService.UpdateUserAsync("TestUser", profile);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.False);
+        }
+
+        [Test]
+        public async Task UpdateUserAsync_ReturnsUpdatedProfile_WhenPermissionsUpdated()
+        {
+            // Arrange
+            _mockUserManager.Setup(_ => _.GetClaimsAsync(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new List<Claim>() { new Claim(CustomClaimTypes.Permission, Permissions.Users.Delete) })
+                .Verifiable();
+            var profile = new ProfileModel()
+            {
+                Permissions = new[] { Permissions.Users.View }
+            };
+
+            // Act
+            var result = await _administratorService.UpdateUserAsync("TestUser", profile);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.True);
+            _mockUserManager.Verify(_ => _.AddClaimsAsync(It.IsAny<ApplicationUser>(), It.Is<IEnumerable<Claim>>(claims => claims.FirstOrDefault(c => c.Value.Equals(Permissions.Users.View)) != null)), Times.Once);
+            _mockUserManager.Verify(_ => _.RemoveClaimsAsync(It.IsAny<ApplicationUser>(), It.Is<IEnumerable<Claim>>(claims => claims.FirstOrDefault(c => c.Value.Equals(Permissions.Users.Delete)) != null)), Times.Once);
+        }
+
+        [Test]
+        public async Task UpdateUserAsync_ReturnsFailure_WhenPermissionsIdentityError()
+        {
+            // Arrange
+            _mockUserManager.Setup(_ => _.AddClaimsAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<Claim>>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Error", Code = "Error" })).Verifiable();
+            var profile = new ProfileModel()
+            {
+                Permissions = new[] { Permissions.Users.View }
+            };
+
+            // Act
+            var result = await _administratorService.UpdateUserAsync("TestUser", profile);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.False);
+            _mockUserManager.Verify(_ => _.AddClaimsAsync(It.IsAny<ApplicationUser>(), It.Is<IEnumerable<Claim>>(claims => claims.FirstOrDefault(c => c.Value.Equals(Permissions.Users.View)) != null)), Times.Once);
+        }
+
+        [Test]
+        public async Task UpdateUserAsync_ReturnsUpdatedProfile_WhenRolesUpdated()
+        {
+            // Arrange
+            _mockUserManager.Setup(_ => _.GetRolesAsync(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new List<string>() { "WillRemoveRole" })
+                .Verifiable();
+            var profile = new ProfileModel()
+            {
+                Roles = new[] {
+                    new RoleModel()
+                    {
+                        Name = "Role",
+                        Id = "Role"
+                    }
+                }
+            };
+
+            // Act
+            var result = await _administratorService.UpdateUserAsync("TestUser", profile);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.True);
+            _mockUserManager.Verify(_ => _.AddToRolesAsync(It.IsAny<ApplicationUser>(), It.Is<IEnumerable<string>>(claims => claims.FirstOrDefault(c => c.Equals("Role")) != null)), Times.Once);
+            _mockUserManager.Verify(_ => _.RemoveFromRolesAsync(It.IsAny<ApplicationUser>(), It.Is<IEnumerable<string>>(claims => claims.FirstOrDefault(c => c.Equals("WillRemoveRole")) != null)), Times.Once);
+        }
+
+        [Test]
+        public async Task UpdateUserAsync_ReturnsFailure_WhenRolesIdentityError()
+        {
+            // Arrange
+            _mockUserManager.Setup(_ => _.AddToRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() {Description = "Error", Code = "Error"})).Verifiable();
+            var profile = new ProfileModel()
+            {
+                Roles = new[] {
+                    new RoleModel()
+                    {
+                        Name = "Role",
+                        Id = "Role"
+                    }
+                }
+            };
+
+            // Act
+            var result = await _administratorService.UpdateUserAsync("TestUser", profile);
+
+            // Assert
+            Assert.That(result.Succeeded, Is.False);
+            _mockUserManager.Verify(_ => _.AddToRolesAsync(It.IsAny<ApplicationUser>(), It.Is<IEnumerable<string>>(claims => claims.FirstOrDefault(c => c.Equals("Role")) != null)), Times.Once);
+        }
+
+        #endregion UpdateUserAsync
+
     }
 }

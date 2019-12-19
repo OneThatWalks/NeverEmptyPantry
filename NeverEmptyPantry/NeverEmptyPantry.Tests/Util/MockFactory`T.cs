@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Claims;
 using NeverEmptyPantry.Authorization.Permissions;
+using NeverEmptyPantry.Common.Models.Entity;
 
 namespace NeverEmptyPantry.Tests.Util
 {
@@ -60,7 +61,11 @@ namespace NeverEmptyPantry.Tests.Util
                 Email = "Test@Email.com",
                 FirstName = "Test",
                 LastName = "User",
-                OfficeLocation = null,
+                OfficeLocation = new OfficeLocation()
+                {
+                    Name = "Office 1",
+                    Id = 1
+                },
                 Title = "Test",
                 PhoneNumber = "8008008888"
             };
@@ -78,6 +83,10 @@ namespace NeverEmptyPantry.Tests.Util
                 .Verifiable();
 
             mgr.Setup(_ => _.FindByNameAsync(It.IsAny<string>()))
+                .ReturnsAsync((string str) => GetApplicationUser(str) as TUser)
+                .Verifiable();
+
+            mgr.Setup(_ => _.FindByIdAsync(It.IsAny<string>()))
                 .ReturnsAsync((string str) => GetApplicationUser(str) as TUser)
                 .Verifiable();
 
@@ -101,6 +110,22 @@ namespace NeverEmptyPantry.Tests.Util
                 .ReturnsAsync(IdentityResult.Success)
                 .Verifiable();
 
+            mgr.Setup(_ => _.AddClaimsAsync(It.IsAny<TUser>(), It.IsAny<IEnumerable<Claim>>()))
+                .ReturnsAsync(IdentityResult.Success)
+                .Verifiable();
+
+            mgr.Setup(_ => _.RemoveClaimsAsync(It.IsAny<TUser>(), It.IsAny<IEnumerable<Claim>>()))
+                .ReturnsAsync(IdentityResult.Success)
+                .Verifiable();
+
+            mgr.Setup(_ => _.AddToRolesAsync(It.IsAny<TUser>(), It.IsAny<IEnumerable<string>>()))
+                .ReturnsAsync(IdentityResult.Success)
+                .Verifiable();
+
+            mgr.Setup(_ => _.RemoveFromRolesAsync(It.IsAny<TUser>(), It.IsAny<IEnumerable<string>>()))
+                .ReturnsAsync(IdentityResult.Success)
+                .Verifiable();
+
             return mgr;
         }
 
@@ -116,7 +141,10 @@ namespace NeverEmptyPantry.Tests.Util
             service.Setup(_ => _.RemoveClaimAsync(It.IsAny<TRole>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Success).Verifiable();
             service.Setup(_ => _.CreateAsync(It.IsAny<TRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
             service.Setup(_ => _.DeleteAsync(It.IsAny<TRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
+            service.Setup(_ => _.UpdateAsync(It.IsAny<TRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
             service.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(true).Verifiable();
+            service.Setup(_ => _.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(new TRole()).Verifiable();
+            service.Setup(_ => _.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new TRole()).Verifiable();
 
             return service;
         }
