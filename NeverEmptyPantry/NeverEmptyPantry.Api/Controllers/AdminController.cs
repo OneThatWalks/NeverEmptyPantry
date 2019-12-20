@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using NeverEmptyPantry.Common.Interfaces.Application;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using NeverEmptyPantry.Authorization.Permissions;
+using NeverEmptyPantry.Common.Interfaces.Application;
 using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Admin;
 using NeverEmptyPantry.Common.Util;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace NeverEmptyPantry.Api.Controllers
 {
