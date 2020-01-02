@@ -142,7 +142,7 @@ namespace NeverEmptyPantry.Tests.Application
         public async Task UpdateRole_ReturnsSuccess_WhenSuccessful()
         {
             // Arrange
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Id = "UPDATEROLE",
                 Name = "UpdateRole",
@@ -163,7 +163,7 @@ namespace NeverEmptyPantry.Tests.Application
         public async Task UpdateRole_AddsRemoves_WhenSuccessful()
         {
             // Arrange
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Id = "UPDATEROLE",
                 Name = "UpdateRole",
@@ -187,7 +187,7 @@ namespace NeverEmptyPantry.Tests.Application
         {
             // Arrange
             _mockRoleManager.Setup(_ => _.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((IdentityRole)null).Verifiable();
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Name = "TestRole",
                 Permissions = new List<string>()
@@ -208,7 +208,7 @@ namespace NeverEmptyPantry.Tests.Application
         {
             // Arrange
             _mockRoleManager.Setup(_ => _.UpdateAsync(It.IsAny<IdentityRole>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Error", Code = "Error" })).Verifiable();
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Id = "UPDATEROLE",
                 Name = "UpdateRole",
@@ -234,7 +234,7 @@ namespace NeverEmptyPantry.Tests.Application
         {
             // Arrange
             _mockRoleManager.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false).Verifiable();
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Name = "TestRole",
                 Permissions = new List<string>()
@@ -252,7 +252,7 @@ namespace NeverEmptyPantry.Tests.Application
         {
             // Arrange
             _mockRoleManager.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false).Verifiable();
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Name = "TestRole",
                 Permissions = new List<string>()
@@ -274,7 +274,7 @@ namespace NeverEmptyPantry.Tests.Application
         public async Task AddRoleAsync_ReturnsFailure_WhenExistingRole()
         {
             // Arrange
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Name = DefaultRoles.User,
                 Permissions = new List<string>()
@@ -293,7 +293,7 @@ namespace NeverEmptyPantry.Tests.Application
             // Arrange
             _mockRoleManager.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false).Verifiable();
             _mockRoleManager.Setup(_ => _.CreateAsync(It.IsAny<IdentityRole>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Test", Code = "Test" })).Verifiable();
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Name = "TestRole",
                 Permissions = new List<string>()
@@ -314,7 +314,7 @@ namespace NeverEmptyPantry.Tests.Application
             // Arrange
             _mockRoleManager.Setup(_ => _.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false).Verifiable();
             _mockRoleManager.Setup(_ => _.AddClaimAsync(It.IsAny<IdentityRole>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Failed(new IdentityError() { Description = "Test", Code = "Test" })).Verifiable();
-            var role = new RoleModel()
+            var role = new RoleViewModel()
             {
                 Name = "TestRole",
                 Permissions = new List<string>()
@@ -589,7 +589,7 @@ namespace NeverEmptyPantry.Tests.Application
             var profile = new ProfileModel()
             {
                 Roles = new[] {
-                    new RoleModel()
+                    new RoleViewModel()
                     {
                         Name = "Role",
                         Id = "Role"
@@ -614,7 +614,7 @@ namespace NeverEmptyPantry.Tests.Application
             var profile = new ProfileModel()
             {
                 Roles = new[] {
-                    new RoleModel()
+                    new RoleViewModel()
                     {
                         Name = "Role",
                         Id = "Role"

@@ -97,13 +97,13 @@ namespace NeverEmptyPantry.Application.Services
             var roles = _roleManager.Roles.Where(r => userRoles.Contains(r.Name)).ToList();
 
             var profile = new ProfileModel(user).AddClaims(userClaims);
-            var profileRoles = new List<RoleModel>();
+            var profileRoles = new List<RoleViewModel>();
 
             foreach (var role in roles)
             {
                 var claims = await _roleManager.GetClaimsAsync(role);
 
-                var roleModel = new RoleModel()
+                var roleModel = new RoleViewModel()
                 {
                     Name = role.Name,
                     Id = role.Id,

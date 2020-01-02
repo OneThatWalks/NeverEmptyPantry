@@ -11,7 +11,7 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
         /// Gets the list of roles
         /// </summary>
         /// <returns>A task result that represents the available roles</returns>
-        Task<IOperationResult<IEnumerable<RoleModel>>> GetRolesAsync();
+        Task<IOperationResult<IEnumerable<RoleViewModel>>> GetRolesAsync();
 
         /// <summary>
         /// Gets available permissions
@@ -22,23 +22,23 @@ namespace NeverEmptyPantry.Common.Interfaces.Application
         /// <summary>
         /// Updates a role
         /// </summary>
-        /// <param name="role">The role model</param>
+        /// <param name="roleView">The role model</param>
         /// <returns>A task result that represents the updated role</returns>
-        Task<IOperationResult<RoleModel>> UpdateRoleAsync(RoleModel role);
+        Task<IOperationResult<RoleViewModel>> UpdateRoleAsync(RoleViewModel roleView);
 
         /// <summary>
         /// Adds a role
         /// </summary>
         /// <param name="name">The name of the role</param>
         /// <returns>A task result that represents the completion of the add operation</returns>
-        Task<IOperationResult<RoleModel>> AddRoleAsync(RoleModel name);
+        Task<IOperationResult<RoleViewModel>> AddRoleAsync(RoleViewModel name);
 
         /// <summary>
         /// Removes a role
         /// </summary>
         /// <param name="name">The name of the role</param>
         /// <returns>A task result that represents the completion of the remove operation</returns>
-        Task<IOperationResult<RoleModel>> RemoveRoleAsync(string name);
+        Task<IOperationResult<RoleViewModel>> RemoveRoleAsync(string name);
 
         /// <summary>
         /// Gets all users

@@ -1,8 +1,14 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NeverEmptyPantry.Api.IntegrationTests.Util;
+using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Admin;
 using NeverEmptyPantry.Repository.Entity;
 using NUnit.Framework;
 
@@ -44,6 +50,39 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
         #region Roles
 
         // GET: /api/admin/roles
+
+        [Test]
+        public async Task GETRoles_ReturnsUnauth_WhenNotAuthorized()
+        {
+            // Arrange
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/api/admin/roles");
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task GETRoles_ReturnsRoles_WhenSuccessful()
+        {
+            // Arrange
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/api/admin/roles");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<IEnumerable<RoleViewModel>>>(response.Content);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content, Is.Not.Null);
+            Assert.That(content.Data, Is.Not.Null);
+        }
 
         #endregion Roles
 

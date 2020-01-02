@@ -29,7 +29,7 @@ namespace NeverEmptyPantry.Common.Models.Account
 
         public IEnumerable<string> Permissions { get; set; }
 
-        public IEnumerable<RoleModel> Roles { get; set; }
+        public IEnumerable<RoleViewModel> Roles { get; set; }
 
         public ProfileModel() { }
 

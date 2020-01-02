@@ -112,6 +112,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddScoped<IValidator<ProfileModel>, ProfileValidator>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IValidatorFactory<Product>, BaseEntityValidatorFactory<Product>>();
+            builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 
             return builder;
         }

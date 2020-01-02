@@ -48,9 +48,9 @@ namespace NeverEmptyPantry.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> UpdateRole([FromBody] RoleModel model)
+        public async Task<IActionResult> UpdateRole([FromBody] RoleViewModel viewModel)
         {
-            var result = await _administratorService.UpdateRoleAsync(model);
+            var result = await _administratorService.UpdateRoleAsync(viewModel);
 
             return ApiHelper.ActionFromOperationResult(result);
         }
@@ -59,9 +59,9 @@ namespace NeverEmptyPantry.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> AddRole([FromBody] RoleModel model)
+        public async Task<IActionResult> AddRole([FromBody] RoleViewModel viewModel)
         {
-            var result = await _administratorService.AddRoleAsync(model);
+            var result = await _administratorService.AddRoleAsync(viewModel);
 
             return ApiHelper.ActionFromOperationResult(result);
         }
