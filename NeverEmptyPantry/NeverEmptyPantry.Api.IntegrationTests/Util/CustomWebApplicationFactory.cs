@@ -194,6 +194,9 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
                 }
             }
 
+            testRole1 = await roleManager.FindByNameAsync("TestRole1");
+            testRole2 = await roleManager.FindByNameAsync("TestRole2");
+
             var testRole1Claims = await roleManager.GetClaimsAsync(testRole1);
             var testRole2Claims = await roleManager.GetClaimsAsync(testRole1);
 
