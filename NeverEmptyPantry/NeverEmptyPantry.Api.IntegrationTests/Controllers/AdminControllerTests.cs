@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NeverEmptyPantry.Api.IntegrationTests.Util;
 using NeverEmptyPantry.Authorization.Permissions;
 using NeverEmptyPantry.Common.Models;
+using NeverEmptyPantry.Common.Models.Account;
 using NeverEmptyPantry.Common.Models.Admin;
 using NeverEmptyPantry.Repository.Entity;
 using NUnit.Framework;
@@ -336,11 +337,87 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
 
         // GET: /api/admin/users
 
+        [Test]
+        public async Task GETUsers_ReturnsUnauth_WhenNotAuthorized()
+        {
+            // Arrange
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/api/admin/users");
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task GETUsers_ReturnsUsers_WhenSuccessful()
+        {
+            // Arrange
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/api/admin/users");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<IEnumerable<ProfileModel>>>(response.Content);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content, Is.Not.Null);
+            Assert.That(content.Data, Is.Not.Null);
+            Assert.That(content.Data.Any(), Is.True);
+        }
+
         #endregion Users
 
         #region UpdateUser
 
-        // PUT: /api/admin/users
+        // PUT: /api/admin/users/{userId}
+
+        [Test]
+        public async Task PUTUsers_ReturnsUnauth_WhenNotAuthorized()
+        {
+            // Arrange
+            var model = new ProfileModel
+            {
+                FirstName = "Re-test"
+            };
+            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/admin/users/TestUser1");
+            request.Content = IntegrationHelpers.CreateHttpContent(model);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task PUTUsers_ReturnsUsers_WhenSuccessful()
+        {
+            // Arrange
+            var model = new ProfileModel
+            {
+                FirstName = "Re-test"
+            };
+            var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
+            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/admin/users/TestUser1");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            request.Content = IntegrationHelpers.CreateHttpContent(model);
+
+            // Act
+            using var response = await _client.SendAsync(request);
+            var content = await
+                IntegrationHelpers.DeserializeHttpContentAsync<OperationResult<ProfileModel>>(response.Content);
+
+            // Assert
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(content, Is.Not.Null);
+            Assert.That(content.Data, Is.Not.Null);
+            Assert.That(content.Data.FirstName, Is.EqualTo(model.FirstName));
+        }
 
         #endregion UpdateUser
     }
