@@ -1,16 +1,17 @@
-﻿using NeverEmptyPantry.Common.Models.Entity;
+﻿using NeverEmptyPantry.Common.Models.Admin;
+using NeverEmptyPantry.Common.Models.Entity;
 using NeverEmptyPantry.Common.Models.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using NeverEmptyPantry.Common.Models.Admin;
 
 namespace NeverEmptyPantry.Common.Models.Account
 {
     public class ProfileModel
     {
+        public string Id { get; set; }
+
         [EmailAddress]
         public string Email { get; set; }
 
@@ -35,6 +36,7 @@ namespace NeverEmptyPantry.Common.Models.Account
 
         public ProfileModel(ApplicationUser user)
         {
+            Id = user.Id;
             Email = user.Email;
             UserName = user.UserName;
             PhoneNumber = user.PhoneNumber;

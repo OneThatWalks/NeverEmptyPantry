@@ -106,6 +106,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
 
             user1 = new ApplicationUser
             {
+                Id = "TESTUSER1",
                 UserName = "TestUser1",
                 Email = "TestUser1@email.com",
                 FirstName = "John",
@@ -134,6 +135,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Util
 
             user2 = new ApplicationUser
             {
+                Id = "TESTUSER2",
                 UserName = "TestUser2",
                 Email = "TestUser2@email.com",
                 FirstName = "Jane",

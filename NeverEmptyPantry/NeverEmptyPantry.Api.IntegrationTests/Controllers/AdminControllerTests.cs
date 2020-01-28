@@ -403,7 +403,7 @@ namespace NeverEmptyPantry.Api.IntegrationTests.Controllers
                 FirstName = "Re-test"
             };
             var token = await IntegrationHelpers.GetAuthorizationTokenAsync(_client);
-            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/admin/users/TestUser1");
+            using var request = new HttpRequestMessage(HttpMethod.Put, "/api/admin/users/TESTUSER1");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             request.Content = IntegrationHelpers.CreateHttpContent(model);
 
