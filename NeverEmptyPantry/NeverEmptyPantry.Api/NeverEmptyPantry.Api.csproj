@@ -11,6 +11,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>423beded-c232-404e-b4ac-24caaf1c3e25</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

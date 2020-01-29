@@ -37,6 +37,7 @@
 
   <PropertyGroup>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
 </Project>
