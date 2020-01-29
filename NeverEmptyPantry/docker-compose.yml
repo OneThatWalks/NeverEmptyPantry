@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  neveremptypantry.api:
+    image: ${DOCKER_REGISTRY-}neveremptypantryapi
+    build:
+      context: .
+      dockerfile: NeverEmptyPantry.Api/Dockerfile

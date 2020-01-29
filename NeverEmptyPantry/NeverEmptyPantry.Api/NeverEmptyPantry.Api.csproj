@@ -12,6 +12,7 @@
     <UserSecretsId>423beded-c232-404e-b4ac-24caaf1c3e25</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <LangVersion>8</LangVersion>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
